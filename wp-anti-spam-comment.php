@@ -200,8 +200,8 @@ function wp_anti_spam_comment_admin_assets($hook)
         return;
     }
 
-    $admin_css_file = WP_ANTI_SPAM_COMMENT_DIR . 'admin/css/admin-style.css';
-    $admin_js_file = WP_ANTI_SPAM_COMMENT_DIR . 'admin/js/admin-script.js';
+    $admin_css_file = plugin_dir_path(__FILE__) . 'admin/css/admin-style.css';
+    $admin_js_file = plugin_dir_path(__FILE__) . 'admin/js/admin-script.js';
     $admin_css_ver = file_exists($admin_css_file) ? (string) filemtime($admin_css_file) : WP_ANTI_SPAM_COMMENT_VERSION;
     $admin_js_ver = file_exists($admin_js_file) ? (string) filemtime($admin_js_file) : WP_ANTI_SPAM_COMMENT_VERSION;
 
