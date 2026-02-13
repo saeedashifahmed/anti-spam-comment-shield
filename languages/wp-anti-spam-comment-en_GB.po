@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WP Anti-Spam Comment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Anti-Spam Comment 2.0.1\n"
+"Project-Id-Version: WP Anti-Spam Comment 2.0.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-anti-spam-"
 "comment\n"
 "Last-Translator: Rabbit Builds\n"

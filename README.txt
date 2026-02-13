@@ -5,7 +5,7 @@ Tags: anti spam, stop spam, comment spam, security, gdpr
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 6.7
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,7 +76,7 @@ You may use, modify, and redistribute it under the terms of the GNU General Publ
 
 == Changelog ==
 
-= 2.0.1 =
+= 2.0.2 =
 * **Major Rebrand** — Renamed from "Forget Spam Comment" to "WP Anti-Spam Comment"
 * **New:** Honeypot trap field for catching bots
 * **New:** Time-based submission check (configurable threshold)
@@ -159,5 +159,5 @@ You may use, modify, and redistribute it under the terms of the GNU General Publ
 
 == Upgrade Notice ==
 
-= 2.0.1 =
+= 2.0.2 =
 **Major update!** Rebranded as "WP Anti-Spam Comment" with new honeypot, time-check, REST API protection, and modern settings page. Please deactivate and reactivate the plugin, then clear your page cache.
