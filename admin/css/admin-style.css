@@ -547,13 +547,13 @@
     border-color: var(--wpasc-danger) !important;
 }
 
-/* ─── How It Works — Uniform Card Layout ─────────────────────────────────── */
+/* ─── How It Works — Tree Layout ─────────────────────────────────────────── */
 .wpasc-how-it-works {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 14px 22px;
     position: relative;
-    padding-top: 4px;
+    padding-top: 6px;
 }
 
 .wpasc-step {
@@ -567,7 +567,7 @@
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     transition: var(--wpasc-transition);
     position: relative;
-    min-height: 168px;
+    min-height: 154px;
 }
 
 .wpasc-step:hover {
@@ -661,20 +661,108 @@
     line-height: 1.55;
 }
 
-@media (min-width: 1180px) {
-    .wpasc-how-it-works {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
+/* Tree positioning */
+.wpasc-step-root,
+.wpasc-step-final {
+    grid-column: 1 / -1;
+    width: min(620px, 100%);
+    justify-self: center;
+}
+
+.wpasc-step-left {
+    grid-column: 1;
+}
+
+.wpasc-step-right {
+    grid-column: 2;
+}
+
+/* Tree connectors (desktop/tablet) */
+.wpasc-how-it-works::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 166px;
+    width: 2px;
+    height: 40px;
+    background: var(--wpasc-border);
+}
+
+.wpasc-how-it-works::after {
+    content: '';
+    position: absolute;
+    left: 25%;
+    top: 206px;
+    width: 50%;
+    height: 2px;
+    background: var(--wpasc-border);
+}
+
+.wpasc-step-left::before,
+.wpasc-step-right::before,
+.wpasc-step-final::before,
+.wpasc-step-root::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    background: var(--wpasc-border);
+}
+
+.wpasc-step-root::after {
+    bottom: -22px;
+    height: 22px;
+}
+
+.wpasc-step-left::before,
+.wpasc-step-right::before {
+    top: -24px;
+    height: 24px;
+}
+
+.wpasc-step-final::before {
+    top: -30px;
+    height: 30px;
+}
+
+@media (max-width: 1100px) {
+    .wpasc-how-it-works::before {
+        top: 178px;
+    }
+
+    .wpasc-how-it-works::after {
+        top: 218px;
+        left: 20%;
+        width: 60%;
     }
 }
 
 @media (max-width: 900px) {
     .wpasc-how-it-works {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
 
-    .wpasc-step {
+    .wpasc-step,
+    .wpasc-step-root,
+    .wpasc-step-final,
+    .wpasc-step-left,
+    .wpasc-step-right {
+        grid-column: auto;
+        width: 100%;
         min-height: 0;
+        justify-self: stretch;
+    }
+
+    .wpasc-how-it-works::before,
+    .wpasc-how-it-works::after,
+    .wpasc-step-root::after,
+    .wpasc-step-left::before,
+    .wpasc-step-right::before,
+    .wpasc-step-final::before {
+        display: none;
     }
 }
 

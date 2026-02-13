@@ -1,11 +1,11 @@
-# Copyright (C) 2021 Gulshan Kumar
-# This file is distributed under the same license as the Forget Spam Comment plugin.
+# Copyright (C) 2026 Rabbit Builds
+# This file is distributed under the same license as the WP Anti-Spam Comment plugin.
 msgid ""
 msgstr ""
 "Project-Id-Version: WP Anti-Spam Comment 2.0.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/forget-spam-"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-anti-spam-"
 "comment\n"
-"Last-Translator: Gulshan Kumar\n"
+"Last-Translator: Rabbit Builds\n"
 "Language-Team: English (UK)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -13,7 +13,7 @@ msgstr ""
 "POT-Creation-Date: 2021-01-18 14:23+0000\n"
 "PO-Revision-Date: 2021-01-18 15:29+0000\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Domain: forget-spam-comment\n"
+"X-Domain: wp-anti-spam-comment\n"
 "Language: en_GB\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Version: 2.5.0; wp-5.6"
@@ -27,27 +27,27 @@ msgid "Buy developer a coffee"
 msgstr "Buy developer a coffee"
 
 #. Name of the plugin
-msgid "Forget Spam Comment"
-msgstr "Forget Spam Comment"
+msgid "WP Anti-Spam Comment"
+msgstr "WP Anti-Spam Comment"
 
 #. Author of the plugin
-msgid "Gulshan Kumar"
-msgstr "Gulshan Kumar"
+msgid "Rabbit Builds (Saeed Ashif Ahmed)"
+msgstr "Rabbit Builds (Saeed Ashif Ahmed)"
 
 #. URI of the plugin
-msgid "https://wordpress.org/plugins/forget-spam-comment/"
-msgstr "https://wordpress.org/plugins/forget-spam-comment/"
+msgid "https://wordpress.org/plugins/wp-anti-spam-comment/"
+msgstr "https://wordpress.org/plugins/wp-anti-spam-comment/"
 
 #. Author URI of the plugin
-msgid "https://www.gulshankumar.net/"
-msgstr "https://www.gulshankumar.net/"
+msgid "https://rabbitbuilds.com/"
+msgstr "https://rabbitbuilds.com/"
 
 #: forget-spam-comment.php:45
 msgid ""
-"Thank you for using Forget Spam Comment. 😎 <strong>Please clear Page "
+"Thank you for using WP Anti-Spam Comment. 😎 <strong>Please clear Page "
 "Cache</strong>"
 msgstr ""
-"Thank you for using Forget Spam Comment. 😎 <strong>Please clear Page "
+"Thank you for using WP Anti-Spam Comment. 😎 <strong>Please clear Page "
 "Cache</strong>"
 
 #. Description of the plugin

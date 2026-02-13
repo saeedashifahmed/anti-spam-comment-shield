@@ -6,18 +6,18 @@ Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 6.7
 Stable tag: 2.0.1
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Advanced, lightweight, and GDPR-compliant anti-spam protection for WordPress comments. Zero configuration needed.
+Advanced, lightweight, GDPR-compliant anti-spam protection for WordPress comments. No setup required.
 
 == Description ==
 
-The fastest and most comprehensive GDPR-compliant Anti-Spam plugin to prevent bot spam in the **Default Commenting System** of WordPress. Formerly known as "Forget Spam Comment" — now with multi-layer protection and a modern settings dashboard.
+WP Anti-Spam Comment is a fast, reliable anti-spam plugin for the **default WordPress commenting system**. It blocks automated bot submissions using layered validation, while keeping the experience clean for real visitors.
 
 == Important ==
-* Please clear page cache after plugin activation.
-* Only for the default commenting system. Not for AMP.
+* Clear your page cache after activation or after changing plugin settings.
+* Works with the default WordPress comment form only (not AMP comment forms).
 
 = Features =
 * 🛡️ **Hash-Based Verification** — Blocks bots by hiding the comment form action URL
@@ -34,10 +34,10 @@ The fastest and most comprehensive GDPR-compliant Anti-Spam plugin to prevent bo
 * Compatible with all page caching and performance optimization plugins
 
 = How does it work? =
-1. The comment form action URL is removed from the HTML
-2. Real user interactions (scroll, mouse move, touch, focus) trigger JavaScript to restore the URL with a unique hash token
-3. Server validates the hash, checks the honeypot, and verifies timing
-4. Failed validations get a 403 response — no spam ever reaches your database
+1. The plugin removes the comment form action URL from raw HTML output.
+2. When real user interaction is detected (scroll, mouse move, touch, or focus), JavaScript restores the action URL with a unique hash token.
+3. On submit, the server validates the hash token, checks the honeypot field, and verifies submission timing.
+4. If any check fails, the request is blocked with a 403 response before spam can reach your database.
 
 == Installation ==
 
@@ -58,16 +58,21 @@ To install manually:
 == Frequently Asked Questions ==
 
 = How to configure the plugin? =
-Navigate to Settings > WP Anti-Spam to toggle protection modules, set timing thresholds, and view spam statistics.
+Go to Settings > WP Anti-Spam to enable or disable protection modules, adjust timing thresholds, customize the blocked message, and review spam statistics.
 
 = How to test whether the plugin is working? =
-Go to any post where comments are enabled and try posting a comment. If it goes through successfully, everything is working. If you see error 403, clear your page cache. If comments still fail, your theme may use a non-standard comment form ID — please open a support topic.
+Open any post with comments enabled and submit a normal comment. If the comment is accepted, the plugin is working. If you see a 403 error, clear your page cache and try again. If it still fails, your theme may use a custom comment form ID—please open a support topic.
 
 = Which commenting system is supported? =
-Only the Default Commenting System of WordPress. Disqus, JetPack Comments, wpDiscuz, and AMP comments are not supported.
+Only the default WordPress commenting system is supported. Third-party systems such as Disqus, JetPack Comments, wpDiscuz, and AMP comments are not supported.
 
 = How to get technical assistance? =
-Please open a support topic. We will reply within 24 hours.
+Please open a support topic on WordPress.org or contact us via rabbitbuilds.com. We typically respond within 24 hours.
+
+== License ==
+
+This plugin is licensed under **GPL-2.0-or-later**.
+You may use, modify, and redistribute it under the terms of the GNU General Public License.
 
 == Changelog ==
 

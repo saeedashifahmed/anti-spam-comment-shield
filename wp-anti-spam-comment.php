@@ -10,8 +10,8 @@
  * Domain Path:       /languages
  * Requires at least: 5.0
  * Requires PHP:      7.4
- * License:           GPLv2 or later
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.html
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 // If this file is called directly, abort.
@@ -496,7 +496,7 @@ function wp_anti_spam_comment_settings_page()
             <div class="wpasc-card-body wpasc-how-it-works">
 
                 <!-- Step 1: Hide -->
-                <div class="wpasc-step">
+                <div class="wpasc-step wpasc-step-root">
                     <div class="wpasc-step-indicator">
                         <div class="wpasc-step-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -517,7 +517,7 @@ function wp_anti_spam_comment_settings_page()
                 </div>
 
                 <!-- Step 2: Detect -->
-                <div class="wpasc-step">
+                <div class="wpasc-step wpasc-step-left">
                     <div class="wpasc-step-indicator">
                         <div class="wpasc-step-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -538,7 +538,7 @@ function wp_anti_spam_comment_settings_page()
                 </div>
 
                 <!-- Step 3: Validate -->
-                <div class="wpasc-step">
+                <div class="wpasc-step wpasc-step-right">
                     <div class="wpasc-step-indicator">
                         <div class="wpasc-step-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -558,7 +558,7 @@ function wp_anti_spam_comment_settings_page()
                 </div>
 
                 <!-- Step 4: Block -->
-                <div class="wpasc-step">
+                <div class="wpasc-step wpasc-step-final">
                     <div class="wpasc-step-indicator">
                         <div class="wpasc-step-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

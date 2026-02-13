@@ -1,6 +1,6 @@
 # WP Anti-Spam Comment
 
-#### Advanced, lightweight, and GDPR-compliant anti-spam protection for WordPress comments. Zero configuration needed.
+#### Advanced, lightweight, GDPR-compliant anti-spam protection for WordPress comments. No setup required.
 
 ![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dd/wp-anti-spam-comment?&color=6C5CE7&style=for-the-badge&labelColor=2d3436&cacheSeconds=300) ![WordPress Plugin Active Installs](https://img.shields.io/wordpress/plugin/installs/wp-anti-spam-comment?style=for-the-badge&labelColor=2d3436&cacheSeconds=300&&color=6C5CE7)
 
@@ -78,7 +78,7 @@ Go to any post with comments enabled and try posting a comment. If it goes throu
 <details>
 <summary>What commenting systems are supported?</summary>
 
-This plugin works with the **default WordPress commenting system** only. Third-party systems like Disqus, JetPack Comments, and wpDiscuz are not supported.
+This plugin supports the **default WordPress commenting system** only. Third-party systems such as Disqus, JetPack Comments, and wpDiscuz are not supported.
 
 </details>
 
@@ -102,3 +102,10 @@ No. AMP pages do not support the JavaScript required for the anti-spam mechanism
 Please [open a support topic](https://wordpress.org/support/plugin/wp-anti-spam-comment/) or visit [rabbitbuilds.com](https://rabbitbuilds.com/contact/). We respond within 24 hours.
 
 </details>
+
+---
+
+### License
+
+This plugin is released under the **GPL-2.0-or-later** license.
+You may use, modify, and redistribute it under the GNU General Public License terms.
