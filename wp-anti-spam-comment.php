@@ -21,12 +21,12 @@ defined('ABSPATH') || die();
  * ─── Constants ───────────────────────────────────────────────────────────────
  */
 define('WP_ANTI_SPAM_COMMENT_VERSION', '2.0.1');
-define('WP_ANTI_SPAM_COMMENT_FILE', __FILE__);
-define('WP_ANTI_SPAM_COMMENT_DIR', plugin_dir_path(__FILE__));
 define('WP_ANTI_SPAM_COMMENT_URL', plugin_dir_url(__FILE__));
 
 // Generate a unique key from NONCE_SALT or DOCUMENT_ROOT
-$wp_anti_spam_comment_key_source = defined('NONCE_SALT') && NONCE_SALT ? NONCE_SALT : $_SERVER['DOCUMENT_ROOT'];
+$wp_anti_spam_comment_key_source = defined('NONCE_SALT') && NONCE_SALT
+    ? NONCE_SALT
+    : (isset($_SERVER['DOCUMENT_ROOT']) ? (string) $_SERVER['DOCUMENT_ROOT'] : ABSPATH);
 define('WP_ANTI_SPAM_COMMENT_UNIQUE_KEY', md5($wp_anti_spam_comment_key_source));
 
 /**
@@ -51,6 +51,32 @@ function wp_anti_spam_comment_get_options()
     return wp_parse_args($options, $defaults);
 }
 
+function wp_anti_spam_comment_get_default_stats()
+{
+    return array(
+        'blocked_total' => 0,
+        'blocked_today' => 0,
+        'blocked_date' => current_time('Y-m-d'),
+        'last_blocked_at' => '',
+    );
+}
+
+function wp_anti_spam_comment_get_stats($refresh_daily = false)
+{
+    $stats = wp_parse_args(
+        get_option('wp_anti_spam_comment_stats', array()),
+        wp_anti_spam_comment_get_default_stats()
+    );
+
+    if ($refresh_daily && $stats['blocked_date'] !== current_time('Y-m-d')) {
+        $stats['blocked_today'] = 0;
+        $stats['blocked_date'] = current_time('Y-m-d');
+        update_option('wp_anti_spam_comment_stats', $stats);
+    }
+
+    return $stats;
+}
+
 /**
  * ─── Activation Hook ─────────────────────────────────────────────────────────
  */
@@ -62,12 +88,7 @@ function wp_anti_spam_comment_activation_hook()
 
     // Initialize stats if not existing
     if (false === get_option('wp_anti_spam_comment_stats')) {
-        update_option('wp_anti_spam_comment_stats', array(
-            'blocked_total' => 0,
-            'blocked_today' => 0,
-            'blocked_date' => current_time('Y-m-d'),
-            'last_blocked_at' => '',
-        ));
+        update_option('wp_anti_spam_comment_stats', wp_anti_spam_comment_get_default_stats());
     }
 
     // Initialize default settings
@@ -96,15 +117,11 @@ function wp_anti_spam_comment_activation_notice()
 {
     if (get_transient('wp-anti-spam-comment-activation-notice')) {
         ?>
-        <style>
-            div#message.updated {
-                display: none;
-            }
-        </style>
         <div class="notice notice-success is-dismissible" style="border-left-color: #DC2626;">
             <p>
-                <strong>🛡️ WP Anti-Spam Comment</strong> is now active!
-                <?php _e('Please <strong>clear your page cache</strong> for the protection to take effect.', 'wp-anti-spam-comment'); ?>
+                <strong>🛡️ <?php esc_html_e('WP Anti-Spam Comment', 'wp-anti-spam-comment'); ?></strong>
+                <?php esc_html_e('is now active!', 'wp-anti-spam-comment'); ?>
+                <?php echo wp_kses_post(__('Please <strong>clear your page cache</strong> for the protection to take effect.', 'wp-anti-spam-comment')); ?>
             </p>
         </div>
         <?php
@@ -120,8 +137,8 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'wp_anti_spam_com
 function wp_anti_spam_comment_action_links($links)
 {
     $custom_links = array(
-        '<a href="' . admin_url('options-general.php?page=wp-anti-spam-comment') . '">' . __('Settings', 'wp-anti-spam-comment') . '</a>',
-        '<a rel="noopener" title="Technical Support" href="https://rabbitbuilds.com/contact/" target="_blank">' . __('Get Support', 'wp-anti-spam-comment') . '</a>',
+        '<a href="' . esc_url(admin_url('options-general.php?page=wp-anti-spam-comment')) . '">' . __('Settings', 'wp-anti-spam-comment') . '</a>',
+        '<a rel="noopener" title="Technical Support" href="' . esc_url('https://rabbitbuilds.com/contact/') . '" target="_blank">' . __('Get Support', 'wp-anti-spam-comment') . '</a>',
     );
     return array_merge($custom_links, $links);
 }
@@ -205,19 +222,7 @@ function wp_anti_spam_comment_admin_assets($hook)
 function wp_anti_spam_comment_settings_page()
 {
     $options = wp_anti_spam_comment_get_options();
-    $stats = get_option('wp_anti_spam_comment_stats', array(
-        'blocked_total' => 0,
-        'blocked_today' => 0,
-        'blocked_date' => current_time('Y-m-d'),
-        'last_blocked_at' => '',
-    ));
-
-    // Reset daily counter if it's a new day
-    if (isset($stats['blocked_date']) && $stats['blocked_date'] !== current_time('Y-m-d')) {
-        $stats['blocked_today'] = 0;
-        $stats['blocked_date'] = current_time('Y-m-d');
-        update_option('wp_anti_spam_comment_stats', $stats);
-    }
+    $stats = wp_anti_spam_comment_get_stats(true);
 
     ?>
     <div class="wrap wpasc-wrap">
@@ -295,10 +300,11 @@ function wp_anti_spam_comment_settings_page()
                 <div class="wpasc-stat-info">
                     <span class="wpasc-stat-last-time">
                         <?php
-                        if (!empty($stats['last_blocked_at'])) {
-                            echo esc_html(human_time_diff(strtotime($stats['last_blocked_at']), current_time('timestamp')) . ' ' . __('ago', 'wp-anti-spam-comment'));
+                        $last_blocked_ts = !empty($stats['last_blocked_at']) ? strtotime($stats['last_blocked_at']) : false;
+                        if ($last_blocked_ts) {
+                            echo esc_html(human_time_diff($last_blocked_ts, current_time('timestamp')) . ' ' . __('ago', 'wp-anti-spam-comment'));
                         } else {
-                            _e('No spam yet', 'wp-anti-spam-comment');
+                            esc_html_e('No spam yet', 'wp-anti-spam-comment');
                         }
                         ?>
                     </span>
@@ -505,7 +511,6 @@ function wp_anti_spam_comment_settings_page()
                                 <line x1="1" y1="1" x2="23" y2="23" />
                             </svg>
                         </div>
-                        <div class="wpasc-step-connector"></div>
                     </div>
                     <div class="wpasc-step-content">
                         <h3>
@@ -526,7 +531,6 @@ function wp_anti_spam_comment_settings_page()
                                 <line x1="12" y1="2" x2="12" y2="4" />
                             </svg>
                         </div>
-                        <div class="wpasc-step-connector"></div>
                     </div>
                     <div class="wpasc-step-content">
                         <h3>
@@ -546,7 +550,6 @@ function wp_anti_spam_comment_settings_page()
                                 <path d="M9 12l2 2 4-4" />
                             </svg>
                         </div>
-                        <div class="wpasc-step-connector"></div>
                     </div>
                     <div class="wpasc-step-content">
                         <h3>
@@ -565,7 +568,6 @@ function wp_anti_spam_comment_settings_page()
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                         </div>
-                        <div class="wpasc-step-connector"></div>
                     </div>
                     <div class="wpasc-step-content">
                         <h3>
@@ -603,14 +605,18 @@ add_action('admin_post_wp_anti_spam_comment_reset', 'wp_anti_spam_comment_handle
 function wp_anti_spam_comment_handle_reset()
 {
     if (!current_user_can('manage_options')) {
-        wp_die(__('Unauthorized', 'wp-anti-spam-comment'));
+        wp_die(
+            esc_html__('Unauthorized', 'wp-anti-spam-comment'),
+            esc_html__('Error', 'wp-anti-spam-comment'),
+            array('response' => 403)
+        );
     }
 
     check_admin_referer('wp_anti_spam_comment_reset_nonce', '_wpnonce_reset');
 
     update_option('wp_anti_spam_comment_settings', wp_anti_spam_comment_get_defaults());
 
-    wp_redirect(admin_url('options-general.php?page=wp-anti-spam-comment&reset=1'));
+    wp_safe_redirect(admin_url('options-general.php?page=wp-anti-spam-comment&reset=1'));
     exit;
 }
 
@@ -621,10 +627,13 @@ add_action('admin_notices', 'wp_anti_spam_comment_reset_notice');
 
 function wp_anti_spam_comment_reset_notice()
 {
-    if (isset($_GET['page']) && $_GET['page'] === 'wp-anti-spam-comment' && isset($_GET['reset'])) {
+    $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
+    $reset = isset($_GET['reset']) ? sanitize_text_field(wp_unslash($_GET['reset'])) : '';
+
+    if ('wp-anti-spam-comment' === $page && '1' === $reset) {
         ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php _e('✅ Settings have been reset to defaults.', 'wp-anti-spam-comment'); ?></p>
+            <p><?php esc_html_e('Settings have been reset to defaults.', 'wp-anti-spam-comment'); ?></p>
         </div>
         <?php
     }
@@ -665,18 +674,18 @@ function wp_anti_spam_comment_inject_js()
     }
 
     $options = wp_anti_spam_comment_get_options();
-    $action_url = wp_make_link_relative(get_site_url()) . '/wp-comments-post.php?' . WP_ANTI_SPAM_COMMENT_UNIQUE_KEY;
+    $action_url = wp_make_link_relative(site_url('/wp-comments-post.php')) . '?' . WP_ANTI_SPAM_COMMENT_UNIQUE_KEY;
     $min_time = absint($options['min_submit_time']);
-    $time_enabled = $options['enable_time_check'] ? 'true' : 'false';
 
     echo "\n<script>\n";
     echo "(function(){\n";
     echo "var f=document.querySelector(\"#commentform,#ast-commentform,#fl-comment-form,#ht-commentform,#wpd-comm-form,.comment-form\");\n";
     echo "if(!f)return;\n";
-    echo "var d=0,t=" . $min_time . ",tc=" . $time_enabled . ";\n";
+    echo "var d=0;\n";
 
     // Inject timestamp hidden field for time-based check
     if ($options['enable_time_check']) {
+        echo "var t=" . $min_time . ";\n";
         echo "var ts=document.createElement('input');ts.type='hidden';ts.name='_wpasc_ts';ts.value=Date.now();f.appendChild(ts);\n";
     }
 
@@ -689,7 +698,7 @@ function wp_anti_spam_comment_inject_js()
     // Time-based: prevent form submit if too fast
     if ($options['enable_time_check']) {
         echo "f.addEventListener('submit',function(e){\n";
-        echo "if(tc&&ts.value&&(Date.now()-parseInt(ts.value))<t*1000){e.preventDefault();alert('" . esc_js(__('Please wait a moment before submitting your comment.', 'wp-anti-spam-comment')) . "');}\n";
+        echo "if(ts.value&&(Date.now()-parseInt(ts.value,10))<t*1000){e.preventDefault();alert('" . esc_js(__('Please wait a moment before submitting your comment.', 'wp-anti-spam-comment')) . "');}\n";
         echo "});\n";
     }
 
@@ -722,7 +731,11 @@ if ($wp_anti_spam_options['enable_honeypot']) {
 
 function wp_anti_spam_comment_check_honeypot($commentdata)
 {
-    if (!empty($_POST['wpasc_website_url'])) {
+    $honeypot_value = isset($_POST['wpasc_website_url'])
+        ? trim((string) wp_unslash($_POST['wpasc_website_url']))
+        : '';
+
+    if ('' !== $honeypot_value) {
         wp_anti_spam_comment_record_block();
         wp_anti_spam_comment_block_response();
     }
@@ -739,16 +752,25 @@ if ($wp_anti_spam_options['enable_time_check']) {
 function wp_anti_spam_comment_check_time($commentdata)
 {
     $options = wp_anti_spam_comment_get_options();
-    if (isset($_POST['_wpasc_ts'])) {
-        $submitted_ts = absint($_POST['_wpasc_ts']);
-        $current_ts = round(microtime(true) * 1000);
-        $elapsed_secs = ($current_ts - $submitted_ts) / 1000;
-
-        if ($elapsed_secs < $options['min_submit_time']) {
-            wp_anti_spam_comment_record_block();
-            wp_anti_spam_comment_block_response();
-        }
+    if (!isset($_POST['_wpasc_ts'])) {
+        return $commentdata;
     }
+
+    $submitted_ts = absint(wp_unslash($_POST['_wpasc_ts']));
+
+    if ($submitted_ts <= 0) {
+        wp_anti_spam_comment_record_block();
+        wp_anti_spam_comment_block_response();
+    }
+
+    $current_ts = (int) round(microtime(true) * 1000);
+    $elapsed_secs = ($current_ts - $submitted_ts) / 1000;
+
+    if ($elapsed_secs < $options['min_submit_time']) {
+        wp_anti_spam_comment_record_block();
+        wp_anti_spam_comment_block_response();
+    }
+
     return $commentdata;
 }
 
@@ -759,7 +781,7 @@ if ($wp_anti_spam_options['enable_rest_protect']) {
     add_filter('rest_pre_insert_comment', 'wp_anti_spam_comment_rest_protect', 10, 2);
 }
 
-function wp_anti_spam_comment_rest_protect($prepared_comment, $request)
+function wp_anti_spam_comment_rest_protect($prepared_comment, $_request)
 {
     if (!is_user_logged_in()) {
         wp_anti_spam_comment_record_block();
@@ -776,18 +798,23 @@ function wp_anti_spam_comment_rest_protect($prepared_comment, $request)
  * ─── 7. Hash-Based Verification on POST ─────────────────────────────────────
  */
 if ($wp_anti_spam_options['enable_hash_check']) {
-    $wp_anti_spam_request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-    $wp_anti_spam_is_post = isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST';
-    $wp_anti_spam_is_comment = strpos($wp_anti_spam_request_uri, 'wp-comments-post.php') !== false;
-    $wp_anti_spam_query_string = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
-    $wp_anti_spam_has_key = $wp_anti_spam_query_string === WP_ANTI_SPAM_COMMENT_UNIQUE_KEY;
-    $wp_anti_spam_referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+    add_action('pre_comment_on_post', 'wp_anti_spam_comment_validate_hash_request');
+}
 
-    if (
-        $wp_anti_spam_is_post &&
-        $wp_anti_spam_is_comment &&
-        !($wp_anti_spam_has_key && strpos($wp_anti_spam_referrer, get_home_url()) !== false)
-    ) {
+function wp_anti_spam_comment_validate_hash_request()
+{
+    $query_string = isset($_SERVER['QUERY_STRING']) ? (string) wp_unslash($_SERVER['QUERY_STRING']) : '';
+    $has_key = hash_equals(WP_ANTI_SPAM_COMMENT_UNIQUE_KEY, $query_string);
+
+    $referrer = wp_get_raw_referer();
+    $home_host = wp_parse_url(home_url(), PHP_URL_HOST);
+    $ref_host = $referrer ? wp_parse_url($referrer, PHP_URL_HOST) : '';
+
+    $has_valid_referrer = !empty($home_host)
+        && !empty($ref_host)
+        && strtolower((string) $home_host) === strtolower((string) $ref_host);
+
+    if (!$has_key || !$has_valid_referrer) {
         wp_anti_spam_comment_record_block();
         wp_anti_spam_comment_block_response();
     }
@@ -803,11 +830,11 @@ function wp_anti_spam_comment_block_response()
         ? $options['blocked_message']
         : __('Your comment was blocked by our anti-spam protection.', 'wp-anti-spam-comment');
 
-    header('HTTP/1.1 403 Forbidden');
-    header('Status: 403 Forbidden');
-    header('Connection: Close');
-    die(
-        '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Blocked</title>'
+    status_header(403);
+    nocache_headers();
+
+    exit(
+        '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' . esc_html__('Blocked', 'wp-anti-spam-comment') . '</title>'
         . '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f2f5;color:#1a1a2e;}'
         . '.box{background:#fff;padding:40px 50px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.08);text-align:center;max-width:480px;}'
         . '.icon{font-size:48px;margin-bottom:16px;}'
@@ -816,9 +843,9 @@ function wp_anti_spam_comment_block_response()
         . '.hint{font-size:13px;color:#999;border-top:1px solid #eee;padding-top:16px;}'
         . '</style></head><body><div class="box">'
         . '<div class="icon">🛡️</div>'
-        . '<h1>Spam Blocked</h1>'
+        . '<h1>' . esc_html__('Spam Blocked', 'wp-anti-spam-comment') . '</h1>'
         . '<p>' . esc_html($message) . '</p>'
-        . '<p class="hint">If you\'re a site admin, please clear your page cache after activating the plugin.</p>'
+        . '<p class="hint">' . esc_html__('If you are a site admin, please clear your page cache after activating the plugin.', 'wp-anti-spam-comment') . '</p>'
         . '</div></body></html>'
     );
 }
@@ -828,12 +855,7 @@ function wp_anti_spam_comment_block_response()
  */
 function wp_anti_spam_comment_record_block()
 {
-    $stats = get_option('wp_anti_spam_comment_stats', array(
-        'blocked_total' => 0,
-        'blocked_today' => 0,
-        'blocked_date' => current_time('Y-m-d'),
-        'last_blocked_at' => '',
-    ));
+    $stats = wp_anti_spam_comment_get_stats();
 
     // Reset daily counter if new day
     if ($stats['blocked_date'] !== current_time('Y-m-d')) {
@@ -859,11 +881,11 @@ function wp_anti_spam_comment_admin_bar($wp_admin_bar)
         return;
     }
 
-    $stats = get_option('wp_anti_spam_comment_stats', array('blocked_total' => 0));
+    $stats = wp_anti_spam_comment_get_stats(true);
 
     $wp_admin_bar->add_node(array(
         'id' => 'wp-anti-spam-comment',
-        'title' => '🛡️ ' . number_format_i18n($stats['blocked_total']) . ' ' . __('spam blocked', 'wp-anti-spam-comment'),
+        'title' => '🛡️ ' . number_format_i18n(absint($stats['blocked_total'])) . ' ' . __('spam blocked', 'wp-anti-spam-comment'),
         'href' => admin_url('options-general.php?page=wp-anti-spam-comment'),
         'meta' => array(
             'title' => __('WP Anti-Spam Comment — Total spam blocked', 'wp-anti-spam-comment'),

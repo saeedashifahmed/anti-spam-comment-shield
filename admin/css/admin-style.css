@@ -619,10 +619,6 @@
     box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
 }
 
-.wpasc-step-connector {
-    display: none;
-}
-
 .wpasc-step-content {
     flex: 1;
     min-width: 0;
