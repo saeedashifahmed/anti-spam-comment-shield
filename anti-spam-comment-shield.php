@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name:       Anti-Spam Comment Shield
- * Plugin URI:        https://wordpress.org/plugins/anti-spam-comment-shield/
+ * Plugin Name:       Rabbit Builds Anti-Spam Comment Shield
+ * Plugin URI:        https://wordpress.org/plugins/rabbit-builds-anti-spam-comment-shield/
  * Description:       Advanced, lightweight, and GDPR-compliant anti-spam protection for WordPress comments. Zero configuration needed — just activate and forget spam forever.
  * Author:            Rabbit Builds (Saeed Ashif Ahmed)
  * Author URI:        https://rabbitbuilds.com/
- * Version:           2.0.2
- * Text Domain:       anti-spam-comment-shield
+ * Version:           2.0.3
+ * Text Domain:       rabbit-builds-anti-spam-comment-shield
  * Domain Path:       /languages
  * Requires at least: 5.0
  * Requires PHP:      7.4
@@ -20,7 +20,7 @@ defined('ABSPATH') || die();
 /**
  * ─── Constants ───────────────────────────────────────────────────────────────
  */
-define('WP_ANTI_SPAM_COMMENT_VERSION', '2.0.2');
+define('WP_ANTI_SPAM_COMMENT_VERSION', '2.0.3');
 define('WP_ANTI_SPAM_COMMENT_URL', plugin_dir_url(__FILE__));
 
 // Generate a unique key from NONCE_SALT or DOCUMENT_ROOT

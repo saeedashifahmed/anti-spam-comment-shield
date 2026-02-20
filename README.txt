@@ -1,11 +1,11 @@
-=== Anti-Spam Comment Shield ===
+=== Rabbit Builds Anti-Spam Comment Shield ===
 Contributors: saeedashifahmed
 Donate link: https://rabbitbuilds.com/
 Tags: anti spam, stop spam, comment spam, security, gdpr
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Advanced, lightweight, GDPR-compliant anti-spam protection for WordPress comment
 
 == Description ==
 
-Anti-Spam Comment Shield is a fast, reliable anti-spam plugin for the **default WordPress commenting system**. It blocks automated bot submissions using layered validation, while keeping the experience clean for real visitors.
+Rabbit Builds Anti-Spam Comment Shield is a fast, reliable anti-spam plugin for the **default WordPress commenting system**. It blocks automated bot submissions using layered validation, while keeping the experience clean for real visitors.
 
 == Important ==
 * Clear your page cache after activation or after changing plugin settings.
@@ -44,13 +44,13 @@ Anti-Spam Comment Shield is a fast, reliable anti-spam plugin for the **default 
 To install from the WordPress Dashboard:
 
 1. Go to Plugins menu > Add New
-1. Search for Anti-Spam Comment Shield
+1. Search for Rabbit Builds Anti-Spam Comment Shield
 1. Activate the plugin
 1. If using a page cache, clear/purge the cache
 
 To install manually:
 
-1. Download the Anti-Spam Comment Shield plugin
+1. Download the Rabbit Builds Anti-Spam Comment Shield plugin
 1. Upload to the `/wp-content/plugins/` directory
 1. Activate through the 'Plugins' menu
 1. If using a page cache, clear/purge the cache
@@ -75,6 +75,10 @@ This plugin is licensed under **GPL-2.0-or-later**.
 You may use, modify, and redistribute it under the terms of the GNU General Public License.
 
 == Changelog ==
+
+= 2.0.3 =
+* Rebranded plugin display name to "Rabbit Builds Anti-Spam Comment Shield"
+* Updated plugin slug to "rabbit-builds-anti-spam-comment-shield"
 
 = 2.0.2 =
 * **Major Rebrand** — Renamed from "Forget Spam Comment" to "Anti-Spam Comment Shield"
@@ -159,5 +163,5 @@ You may use, modify, and redistribute it under the terms of the GNU General Publ
 
 == Upgrade Notice ==
 
-= 2.0.2 =
-**Major update!** Rebranded as "Anti-Spam Comment Shield" with new honeypot, time-check, REST API protection, and modern settings page. Please deactivate and reactivate the plugin, then clear your page cache.
+= 2.0.3 =
+Updated branding and slug to "Rabbit Builds Anti-Spam Comment Shield" (`rabbit-builds-anti-spam-comment-shield`).
