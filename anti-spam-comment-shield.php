@@ -119,7 +119,7 @@ function wp_anti_spam_comment_activation_notice()
         ?>
         <div class="notice notice-success is-dismissible" style="border-left-color: #DC2626;">
             <p>
-                <strong>🛡️ <?php esc_html_e('Anti-Spam Comment Shield', 'anti-spam-comment-shield'); ?></strong>
+                <strong>🛡️ <?php esc_html_e('Rabbit Builds Anti-Spam Comment Shield', 'anti-spam-comment-shield'); ?></strong>
                 <?php esc_html_e('is now active!', 'anti-spam-comment-shield'); ?>
                 <?php echo wp_kses_post(__('Please <strong>clear your page cache</strong> for the protection to take effect.', 'anti-spam-comment-shield')); ?>
             </p>
@@ -151,8 +151,8 @@ add_action('admin_menu', 'wp_anti_spam_comment_admin_menu');
 function wp_anti_spam_comment_admin_menu()
 {
     add_options_page(
-        __('Anti-Spam Comment Shield', 'anti-spam-comment-shield'),
-        __('Anti-Spam Shield', 'anti-spam-comment-shield'),
+        __('Rabbit Builds Anti-Spam Comment Shield', 'anti-spam-comment-shield'),
+        __('Rabbit Builds Anti-Spam', 'anti-spam-comment-shield'),
         'manage_options',
         'anti-spam-comment-shield',
         'wp_anti_spam_comment_settings_page'
@@ -243,7 +243,7 @@ function wp_anti_spam_comment_settings_page()
                     </svg>
                 </div>
                 <div>
-                    <h1 class="wpasc-title"><?php esc_html_e('Anti-Spam Comment Shield', 'anti-spam-comment-shield'); ?></h1>
+                    <h1 class="wpasc-title"><?php esc_html_e('Rabbit Builds Anti-Spam Comment Shield', 'anti-spam-comment-shield'); ?></h1>
                     <p class="wpasc-subtitle">
                         <?php esc_html_e('Advanced spam protection for WordPress comments', 'anti-spam-comment-shield'); ?></p>
                 </div>
@@ -812,7 +812,7 @@ function wp_anti_spam_comment_rest_protect($prepared_comment, $_request)
         wp_anti_spam_comment_record_block();
         return new WP_Error(
             'rest_comment_spam_blocked',
-            __('Comment blocked by Anti-Spam Comment Shield.', 'anti-spam-comment-shield'),
+            __('Comment blocked by Rabbit Builds Anti-Spam Comment Shield.', 'anti-spam-comment-shield'),
             array('status' => 403)
         );
     }
@@ -913,7 +913,7 @@ function wp_anti_spam_comment_admin_bar($wp_admin_bar)
         'title' => '🛡️ ' . number_format_i18n(absint($stats['blocked_total'])) . ' ' . esc_html__('spam blocked', 'anti-spam-comment-shield'),
         'href' => admin_url('options-general.php?page=anti-spam-comment-shield'),
         'meta' => array(
-            'title' => esc_html__('Anti-Spam Comment Shield — Total spam blocked', 'anti-spam-comment-shield'),
+            'title' => esc_html__('Rabbit Builds Anti-Spam Comment Shield — Total spam blocked', 'anti-spam-comment-shield'),
         ),
     ));
 }
