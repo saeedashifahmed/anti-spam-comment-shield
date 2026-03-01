@@ -14,7 +14,7 @@ msgstr ""
 "POT-Creation-Date: 2024-02-13 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: Anti-Spam Comment Shield\n"
-"X-Domain: anti-spam-comment-shield\n"
+"X-Domain: rabbitbuilds-anti-spam-comment-shield\n"
 "Language: \n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;"
 
@@ -31,169 +31,169 @@ msgid "Saeed Ashif Ahmed"
 msgstr ""
 
 #. URI of the plugin
-msgid "https://wordpress.org/plugins/anti-spam-comment-shield/"
+msgid "https://wordpress.org/plugins/rabbitbuilds-anti-spam-comment-shield/"
 msgstr ""
 
 #. Author URI of the plugin
 msgid "https://rabbitbuilds.com/"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Please <strong>clear your page cache</strong> for the protection to take effect."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Settings"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Get Support"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Your comment was blocked by our anti-spam protection. If you believe this is an error, please try again."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Advanced spam protection for WordPress comments"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Total Spam Blocked"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Blocked Today"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Protection Status"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Active"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Last Spam Blocked"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "No spam yet"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "ago"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Protection Modules"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Enable or disable individual spam protection layers."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Hash-Based Verification"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Core"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Blocks bots by requiring a unique hash token in the comment form action URL — only injected via JavaScript when a real user interacts with the page."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Honeypot Trap"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "New"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Adds a hidden field to the comment form that only bots will fill out. Human visitors never see it."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Time-Based Check"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "REST API Protection"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Blocks unauthenticated comment creation through the WordPress REST API endpoint."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Advanced Settings"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Fine-tune the anti-spam behavior."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Minimum Submit Time (seconds)"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Custom Blocked Message"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Save Settings"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Reset to Defaults"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Reset all settings to default?"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "How It Works"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Action URL Removed"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "User Interaction Required"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Multi-Layer Validation"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Spam Blocked"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "spam blocked"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Anti-Spam Comment Shield — Total spam blocked"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Website URL"
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Please wait a moment before submitting your comment."
 msgstr ""
 
-#: anti-spam-comment-shield.php
+#: rabbitbuilds-anti-spam-comment-shield.php
 msgid "Comment blocked by Anti-Spam Comment Shield."
 msgstr ""

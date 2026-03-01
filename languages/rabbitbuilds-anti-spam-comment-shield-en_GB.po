@@ -6,25 +6,25 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-anti-spam-"
 "comment\n"
 "Last-Translator: Rabbit Builds\n"
-"Language-Team: हिन्दी\n"
+"Language-Team: English (UK)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2021-01-18 14:23+0000\n"
-"PO-Revision-Date: 2021-01-18 14:33+0000\n"
+"PO-Revision-Date: 2021-01-18 15:29+0000\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Domain: anti-spam-comment-shield\n"
-"Language: hi_IN\n"
+"X-Domain: rabbitbuilds-anti-spam-comment-shield\n"
+"Language: en_GB\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Version: 2.5.0; wp-5.6"
 
 #: forget-spam-comment.php:57
 msgid "Ask a Question"
-msgstr "प्रश्न पूछें"
+msgstr "Ask a Question"
 
 #: forget-spam-comment.php:58
 msgid "Buy developer a coffee"
-msgstr "डेवलपर के लिए कॉफी खरीदें"
+msgstr "Buy developer a coffee"
 
 #. Name of the plugin
 msgid "Anti-Spam Comment Shield"
@@ -35,8 +35,8 @@ msgid "Rabbit Builds (Saeed Ashif Ahmed)"
 msgstr "Rabbit Builds (Saeed Ashif Ahmed)"
 
 #. URI of the plugin
-msgid "https://wordpress.org/plugins/anti-spam-comment-shield/"
-msgstr "https://wordpress.org/plugins/anti-spam-comment-shield/"
+msgid "https://wordpress.org/plugins/rabbitbuilds-anti-spam-comment-shield/"
+msgstr "https://wordpress.org/plugins/rabbitbuilds-anti-spam-comment-shield/"
 
 #. Author URI of the plugin
 msgid "https://rabbitbuilds.com/"
@@ -47,13 +47,13 @@ msgid ""
 "Thank you for using Anti-Spam Comment Shield. 😎 <strong>Please clear Page "
 "Cache</strong>"
 msgstr ""
-"😎 Anti-Spam Comment Shield  प्लगइन का उपयोग करने के लिए आपका धन्यवाद।  <strong>"
-"कृपया पेज कैश क्लियर करें।</strong>"
+"Thank you for using Anti-Spam Comment Shield. 😎 <strong>Please clear Page "
+"Cache</strong>"
 
 #. Description of the plugin
 msgid ""
 "The ultimate solution to stop spam comments in default commenting system of "
 "WordPress."
 msgstr ""
-"वर्डप्रेस की डिफ़ॉल्ट टिप्पणी प्रणाली में स्पैम टिप्पणियों को रोकने के लिए "
-"अंतिम समाधान।"
+"The ultimate solution to stop spam comments in default commenting system of "
+"WordPress."

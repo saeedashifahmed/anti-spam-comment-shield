@@ -1,12 +1,12 @@
 <?php
 /**
  * Plugin Name:       Rabbit Builds Anti-Spam Comment Shield
- * Plugin URI:        https://wordpress.org/plugins/rabbit-builds-anti-spam-comment-shield/
+ * Plugin URI:        https://wordpress.org/plugins/rabbitbuilds-anti-spam-comment-shield/
  * Description:       Advanced, lightweight, and GDPR-compliant anti-spam protection for WordPress comments. Zero configuration needed — just activate and forget spam forever.
  * Author:            Rabbit Builds (Saeed Ashif Ahmed)
  * Author URI:        https://rabbitbuilds.com/
  * Version:           2.0.3
- * Text Domain:       rabbit-builds-anti-spam-comment-shield
+ * Text Domain:       rabbitbuilds-anti-spam-comment-shield
  * Domain Path:       /languages
  * Requires at least: 5.0
  * Requires PHP:      7.4
@@ -20,38 +20,38 @@ defined('ABSPATH') || die();
 /**
  * ─── Constants ───────────────────────────────────────────────────────────────
  */
-define('WP_ANTI_SPAM_COMMENT_VERSION', '2.0.3');
-define('WP_ANTI_SPAM_COMMENT_URL', plugin_dir_url(__FILE__));
+define('RBASCS_VERSION', '2.0.3');
+define('RBASCS_URL', plugin_dir_url(__FILE__));
 
 // Generate a unique key from NONCE_SALT or DOCUMENT_ROOT
-$wp_anti_spam_comment_key_source = defined('NONCE_SALT') && NONCE_SALT
+$rbascs_key_source = defined('NONCE_SALT') && NONCE_SALT
     ? NONCE_SALT
-    : (isset($_SERVER['DOCUMENT_ROOT']) ? sanitize_text_field(wp_unslash($_SERVER['DOCUMENT_ROOT'])) : ABSPATH);
-define('WP_ANTI_SPAM_COMMENT_UNIQUE_KEY', md5($wp_anti_spam_comment_key_source));
+    : (isset($_SERVER['DOCUMENT_ROOT']) ? sanitize_text_field(wp_unslash($_SERVER['DOCUMENT_ROOT'])) : plugin_dir_path(__FILE__));
+define('RBASCS_UNIQUE_KEY', md5($rbascs_key_source));
 
 /**
  * ─── Default Settings ────────────────────────────────────────────────────────
  */
-function wp_anti_spam_comment_get_defaults()
+function rbascs_get_defaults()
 {
     return array(
         'enable_hash_check' => 1,
         'enable_honeypot' => 1,
         'enable_time_check' => 1,
         'min_submit_time' => 3,
-        'blocked_message' => __('Your comment was blocked by our anti-spam protection. If you believe this is an error, please try again.', 'anti-spam-comment-shield'),
+        'blocked_message' => __('Your comment was blocked by our anti-spam protection. If you believe this is an error, please try again.', 'rabbitbuilds-anti-spam-comment-shield'),
         'enable_rest_protect' => 1,
     );
 }
 
-function wp_anti_spam_comment_get_options()
+function rbascs_get_options()
 {
-    $defaults = wp_anti_spam_comment_get_defaults();
-    $options = get_option('wp_anti_spam_comment_settings', array());
+    $defaults = rbascs_get_defaults();
+    $options = get_option('rbascs_settings', array());
     return wp_parse_args($options, $defaults);
 }
 
-function wp_anti_spam_comment_get_default_stats()
+function rbascs_get_default_stats()
 {
     return array(
         'blocked_total' => 0,
@@ -61,17 +61,17 @@ function wp_anti_spam_comment_get_default_stats()
     );
 }
 
-function wp_anti_spam_comment_get_stats($refresh_daily = false)
+function rbascs_get_stats($refresh_daily = false)
 {
     $stats = wp_parse_args(
-        get_option('wp_anti_spam_comment_stats', array()),
-        wp_anti_spam_comment_get_default_stats()
+        get_option('rbascs_stats', array()),
+        rbascs_get_default_stats()
     );
 
     if ($refresh_daily && $stats['blocked_date'] !== current_time('Y-m-d')) {
         $stats['blocked_today'] = 0;
         $stats['blocked_date'] = current_time('Y-m-d');
-        update_option('wp_anti_spam_comment_stats', $stats);
+        update_option('rbascs_stats', $stats);
     }
 
     return $stats;
@@ -80,65 +80,65 @@ function wp_anti_spam_comment_get_stats($refresh_daily = false)
 /**
  * ─── Activation Hook ─────────────────────────────────────────────────────────
  */
-register_activation_hook(__FILE__, 'wp_anti_spam_comment_activation_hook');
+register_activation_hook(__FILE__, 'rbascs_activation_hook');
 
-function wp_anti_spam_comment_activation_hook()
+function rbascs_activation_hook()
 {
-    set_transient('anti-spam-comment-shield-activation-notice', true, 5);
+    set_transient('rbascs_activation_notice', true, 5);
 
     // Initialize stats if not existing
-    if (false === get_option('wp_anti_spam_comment_stats')) {
-        update_option('wp_anti_spam_comment_stats', wp_anti_spam_comment_get_default_stats());
+    if (false === get_option('rbascs_stats')) {
+        update_option('rbascs_stats', rbascs_get_default_stats());
     }
 
     // Initialize default settings
-    if (false === get_option('wp_anti_spam_comment_settings')) {
-        update_option('wp_anti_spam_comment_settings', wp_anti_spam_comment_get_defaults());
+    if (false === get_option('rbascs_settings')) {
+        update_option('rbascs_settings', rbascs_get_defaults());
     }
 }
 
 /**
  * ─── Deactivation Hook ──────────────────────────────────────────────────────
  */
-register_deactivation_hook(__FILE__, 'wp_anti_spam_comment_deactivation_hook');
+register_deactivation_hook(__FILE__, 'rbascs_deactivation_hook');
 
-function wp_anti_spam_comment_deactivation_hook()
+function rbascs_deactivation_hook()
 {
     // Clean up transients only; preserve stats and settings
-    delete_transient('anti-spam-comment-shield-activation-notice');
+    delete_transient('rbascs_activation_notice');
 }
 
 /**
  * ─── Admin Notice on Activation ─────────────────────────────────────────────
  */
-add_action('admin_notices', 'wp_anti_spam_comment_activation_notice');
+add_action('admin_notices', 'rbascs_activation_notice');
 
-function wp_anti_spam_comment_activation_notice()
+function rbascs_activation_notice()
 {
-    if (get_transient('anti-spam-comment-shield-activation-notice')) {
+    if (get_transient('rbascs_activation_notice')) {
         ?>
         <div class="notice notice-success is-dismissible" style="border-left-color: #DC2626;">
             <p>
-                <strong>🛡️ <?php esc_html_e('Rabbit Builds Anti-Spam Comment Shield', 'anti-spam-comment-shield'); ?></strong>
-                <?php esc_html_e('is now active!', 'anti-spam-comment-shield'); ?>
-                <?php echo wp_kses_post(__('Please <strong>clear your page cache</strong> for the protection to take effect.', 'anti-spam-comment-shield')); ?>
+                <strong>🛡️ <?php esc_html_e('Rabbit Builds Anti-Spam Comment Shield', 'rabbitbuilds-anti-spam-comment-shield'); ?></strong>
+                <?php esc_html_e('is now active!', 'rabbitbuilds-anti-spam-comment-shield'); ?>
+                <?php echo wp_kses_post(__('Please <strong>clear your page cache</strong> for the protection to take effect.', 'rabbitbuilds-anti-spam-comment-shield')); ?>
             </p>
         </div>
         <?php
-        delete_transient('anti-spam-comment-shield-activation-notice');
+        delete_transient('rbascs_activation_notice');
     }
 }
 
 /**
  * ─── Plugin Action Links (Settings + Support) ──────────────────────────────
  */
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'wp_anti_spam_comment_action_links');
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'rbascs_action_links');
 
-function wp_anti_spam_comment_action_links($links)
+function rbascs_action_links($links)
 {
     $custom_links = array(
-        '<a href="' . esc_url(admin_url('options-general.php?page=anti-spam-comment-shield')) . '">' . esc_html__('Settings', 'anti-spam-comment-shield') . '</a>',
-        '<a rel="noopener" title="Technical Support" href="' . esc_url('https://rabbitbuilds.com/contact/') . '" target="_blank">' . esc_html__('Get Support', 'anti-spam-comment-shield') . '</a>',
+        '<a href="' . esc_url(admin_url('options-general.php?page=rabbitbuilds-anti-spam-comment-shield')) . '">' . esc_html__('Settings', 'rabbitbuilds-anti-spam-comment-shield') . '</a>',
+        '<a rel="noopener" title="Technical Support" href="' . esc_url('https://rabbitbuilds.com/contact/') . '" target="_blank">' . esc_html__('Get Support', 'rabbitbuilds-anti-spam-comment-shield') . '</a>',
     );
     return array_merge($custom_links, $links);
 }
@@ -146,30 +146,30 @@ function wp_anti_spam_comment_action_links($links)
 /**
  * ─── Admin Menu & Settings Page ─────────────────────────────────────────────
  */
-add_action('admin_menu', 'wp_anti_spam_comment_admin_menu');
+add_action('admin_menu', 'rbascs_admin_menu');
 
-function wp_anti_spam_comment_admin_menu()
+function rbascs_admin_menu()
 {
     add_options_page(
-        __('Rabbit Builds Anti-Spam Comment Shield', 'anti-spam-comment-shield'),
-        __('Rabbit Builds Anti-Spam', 'anti-spam-comment-shield'),
+        __('Rabbit Builds Anti-Spam Comment Shield', 'rabbitbuilds-anti-spam-comment-shield'),
+        __('Rabbit Builds Anti-Spam', 'rabbitbuilds-anti-spam-comment-shield'),
         'manage_options',
-        'anti-spam-comment-shield',
-        'wp_anti_spam_comment_settings_page'
+        'rabbitbuilds-anti-spam-comment-shield',
+        'rbascs_settings_page'
     );
 }
 
 /**
  * ─── Register Settings ──────────────────────────────────────────────────────
  */
-add_action('admin_init', 'wp_anti_spam_comment_register_settings');
+add_action('admin_init', 'rbascs_register_settings');
 
-function wp_anti_spam_comment_register_settings()
+function rbascs_register_settings()
 {
-    register_setting('wp_anti_spam_comment_settings_group', 'wp_anti_spam_comment_settings', 'wp_anti_spam_comment_sanitize_settings');
+    register_setting('rbascs_settings_group', 'rbascs_settings', 'rbascs_sanitize_settings');
 }
 
-function wp_anti_spam_comment_sanitize_settings($input)
+function rbascs_sanitize_settings($input)
 {
     $sanitized = array();
     $sanitized['enable_hash_check'] = isset($input['enable_hash_check']) ? 1 : 0;
@@ -192,29 +192,29 @@ function wp_anti_spam_comment_sanitize_settings($input)
 /**
  * ─── Enqueue Admin Assets ───────────────────────────────────────────────────
  */
-add_action('admin_enqueue_scripts', 'wp_anti_spam_comment_admin_assets');
+add_action('admin_enqueue_scripts', 'rbascs_admin_assets');
 
-function wp_anti_spam_comment_admin_assets($hook)
+function rbascs_admin_assets($hook)
 {
-    if ('settings_page_anti-spam-comment-shield' !== $hook) {
+    if ('settings_page_rabbitbuilds-anti-spam-comment-shield' !== $hook) {
         return;
     }
 
     $admin_css_file = plugin_dir_path(__FILE__) . 'admin/css/admin-style.css';
     $admin_js_file = plugin_dir_path(__FILE__) . 'admin/js/admin-script.js';
-    $admin_css_ver = file_exists($admin_css_file) ? (string) filemtime($admin_css_file) : WP_ANTI_SPAM_COMMENT_VERSION;
-    $admin_js_ver = file_exists($admin_js_file) ? (string) filemtime($admin_js_file) : WP_ANTI_SPAM_COMMENT_VERSION;
+    $admin_css_ver = file_exists($admin_css_file) ? (string) filemtime($admin_css_file) : RBASCS_VERSION;
+    $admin_js_ver = file_exists($admin_js_file) ? (string) filemtime($admin_js_file) : RBASCS_VERSION;
 
     wp_enqueue_style(
-        'anti-spam-comment-shield-admin',
-        WP_ANTI_SPAM_COMMENT_URL . 'admin/css/admin-style.css',
+        'rbascs-admin-style',
+        RBASCS_URL . 'admin/css/admin-style.css',
         array(),
         $admin_css_ver
     );
 
     wp_enqueue_script(
-        'anti-spam-comment-shield-admin-js',
-        WP_ANTI_SPAM_COMMENT_URL . 'admin/js/admin-script.js',
+        'rbascs-admin-script',
+        RBASCS_URL . 'admin/js/admin-script.js',
         array(),
         $admin_js_ver,
         true
@@ -224,10 +224,10 @@ function wp_anti_spam_comment_admin_assets($hook)
 /**
  * ─── Settings Page Render ───────────────────────────────────────────────────
  */
-function wp_anti_spam_comment_settings_page()
+function rbascs_settings_page()
 {
-    $options = wp_anti_spam_comment_get_options();
-    $stats = wp_anti_spam_comment_get_stats(true);
+    $options = rbascs_get_options();
+    $stats = rbascs_get_stats(true);
 
     ?>
     <div class="wrap wpasc-wrap">
@@ -243,11 +243,11 @@ function wp_anti_spam_comment_settings_page()
                     </svg>
                 </div>
                 <div>
-                    <h1 class="wpasc-title"><?php esc_html_e('Rabbit Builds Anti-Spam Comment Shield', 'anti-spam-comment-shield'); ?></h1>
+                    <h1 class="wpasc-title"><?php esc_html_e('Rabbit Builds Anti-Spam Comment Shield', 'rabbitbuilds-anti-spam-comment-shield'); ?></h1>
                     <p class="wpasc-subtitle">
-                        <?php esc_html_e('Advanced spam protection for WordPress comments', 'anti-spam-comment-shield'); ?></p>
+                        <?php esc_html_e('Advanced spam protection for WordPress comments', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
                 </div>
-                <span class="wpasc-version">v<?php echo esc_html(WP_ANTI_SPAM_COMMENT_VERSION); ?></span>
+                <span class="wpasc-version">v<?php echo esc_html(RBASCS_VERSION); ?></span>
             </div>
         </div>
 
@@ -263,7 +263,7 @@ function wp_anti_spam_comment_settings_page()
                 </div>
                 <div class="wpasc-stat-info">
                     <span class="wpasc-stat-number" data-count="<?php echo absint($stats['blocked_total']); ?>">0</span>
-                    <span class="wpasc-stat-label"><?php esc_html_e('Total Blocked', 'anti-spam-comment-shield'); ?></span>
+                    <span class="wpasc-stat-label"><?php esc_html_e('Total Blocked', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                 </div>
             </div>
             <div class="wpasc-stat-card wpasc-stat-today">
@@ -278,7 +278,7 @@ function wp_anti_spam_comment_settings_page()
                 </div>
                 <div class="wpasc-stat-info">
                     <span class="wpasc-stat-number" data-count="<?php echo absint($stats['blocked_today']); ?>">0</span>
-                    <span class="wpasc-stat-label"><?php esc_html_e('Blocked Today', 'anti-spam-comment-shield'); ?></span>
+                    <span class="wpasc-stat-label"><?php esc_html_e('Blocked Today', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                 </div>
             </div>
             <div class="wpasc-stat-card wpasc-stat-status">
@@ -290,8 +290,8 @@ function wp_anti_spam_comment_settings_page()
                     </svg>
                 </div>
                 <div class="wpasc-stat-info">
-                    <span class="wpasc-stat-status-text"><?php esc_html_e('Active', 'anti-spam-comment-shield'); ?></span>
-                    <span class="wpasc-stat-label"><?php esc_html_e('Protection', 'anti-spam-comment-shield'); ?></span>
+                    <span class="wpasc-stat-status-text"><?php esc_html_e('Active', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
+                    <span class="wpasc-stat-label"><?php esc_html_e('Protection', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                 </div>
             </div>
             <div class="wpasc-stat-card wpasc-stat-last">
@@ -307,20 +307,20 @@ function wp_anti_spam_comment_settings_page()
                         <?php
                         $last_blocked_ts = !empty($stats['last_blocked_at']) ? strtotime($stats['last_blocked_at']) : false;
                         if ($last_blocked_ts) {
-                            echo esc_html(human_time_diff($last_blocked_ts, current_time('timestamp')) . ' ' . __('ago', 'anti-spam-comment-shield'));
+                            echo esc_html(human_time_diff($last_blocked_ts, current_time('timestamp')) . ' ' . __('ago', 'rabbitbuilds-anti-spam-comment-shield'));
                         } else {
-                            esc_html_e('No spam yet', 'anti-spam-comment-shield');
+                            esc_html_e('No spam yet', 'rabbitbuilds-anti-spam-comment-shield');
                         }
                         ?>
                     </span>
-                    <span class="wpasc-stat-label"><?php esc_html_e('Last Blocked', 'anti-spam-comment-shield'); ?></span>
+                    <span class="wpasc-stat-label"><?php esc_html_e('Last Blocked', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                 </div>
             </div>
         </div>
 
         <!-- Settings Form -->
         <form method="post" action="options.php" class="wpasc-settings-form">
-            <?php settings_fields('wp_anti_spam_comment_settings_group'); ?>
+            <?php settings_fields('rbascs_settings_group'); ?>
 
             <!-- Protection Modules -->
             <div class="wpasc-card">
@@ -331,10 +331,10 @@ function wp_anti_spam_comment_settings_page()
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
-                        <?php esc_html_e('Protection Modules', 'anti-spam-comment-shield'); ?>
+                        <?php esc_html_e('Protection Modules', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                     </h2>
                     <p class="wpasc-card-desc">
-                        <?php esc_html_e('Enable or disable individual spam protection layers.', 'anti-spam-comment-shield'); ?></p>
+                        <?php esc_html_e('Enable or disable individual spam protection layers.', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
                 </div>
                 <div class="wpasc-card-body">
 
@@ -342,16 +342,16 @@ function wp_anti_spam_comment_settings_page()
                     <div class="wpasc-setting-row">
                         <div class="wpasc-setting-info">
                             <label class="wpasc-setting-title" for="enable_hash_check">
-                                <?php esc_html_e('Hash-Based Verification', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('Hash-Based Verification', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                 <span
-                                    class="wpasc-badge wpasc-badge-recommended"><?php esc_html_e('Core', 'anti-spam-comment-shield'); ?></span>
+                                    class="wpasc-badge wpasc-badge-recommended"><?php esc_html_e('Core', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                             </label>
                             <p class="wpasc-setting-desc">
-                                <?php esc_html_e('Blocks bots by requiring a unique hash token in the comment form action URL — only injected via JavaScript when a real user interacts with the page.', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('Blocks bots by requiring a unique hash token in the comment form action URL — only injected via JavaScript when a real user interacts with the page.', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                             </p>
                         </div>
                         <label class="wpasc-toggle">
-                            <input type="checkbox" name="wp_anti_spam_comment_settings[enable_hash_check]"
+                            <input type="checkbox" name="rbascs_settings[enable_hash_check]"
                                 id="enable_hash_check" value="1" <?php checked($options['enable_hash_check'], 1); ?> />
                             <span class="wpasc-toggle-slider"></span>
                         </label>
@@ -361,16 +361,16 @@ function wp_anti_spam_comment_settings_page()
                     <div class="wpasc-setting-row">
                         <div class="wpasc-setting-info">
                             <label class="wpasc-setting-title" for="enable_honeypot">
-                                <?php esc_html_e('Honeypot Trap', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('Honeypot Trap', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                 <span
-                                    class="wpasc-badge wpasc-badge-new"><?php esc_html_e('New', 'anti-spam-comment-shield'); ?></span>
+                                    class="wpasc-badge wpasc-badge-new"><?php esc_html_e('New', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                             </label>
                             <p class="wpasc-setting-desc">
-                                <?php esc_html_e('Adds a hidden field to the comment form that only bots will fill out. Human visitors never see it.', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('Adds a hidden field to the comment form that only bots will fill out. Human visitors never see it.', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                             </p>
                         </div>
                         <label class="wpasc-toggle">
-                            <input type="checkbox" name="wp_anti_spam_comment_settings[enable_honeypot]"
+                            <input type="checkbox" name="rbascs_settings[enable_honeypot]"
                                 id="enable_honeypot" value="1" <?php checked($options['enable_honeypot'], 1); ?> />
                             <span class="wpasc-toggle-slider"></span>
                         </label>
@@ -380,22 +380,24 @@ function wp_anti_spam_comment_settings_page()
                     <div class="wpasc-setting-row">
                         <div class="wpasc-setting-info">
                             <label class="wpasc-setting-title" for="enable_time_check">
-                                <?php esc_html_e('Time-Based Check', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('Time-Based Check', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                 <span
-                                    class="wpasc-badge wpasc-badge-new"><?php esc_html_e('New', 'anti-spam-comment-shield'); ?></span>
+                                    class="wpasc-badge wpasc-badge-new"><?php esc_html_e('New', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                             </label>
                             <p class="wpasc-setting-desc">
                                 <?php
-                                printf(
-                                    /* translators: %s is the minimum number of seconds required before a comment can be submitted. */
-                                    __('Rejects comments submitted within %s seconds of page load. Real users take at least a few seconds to type.', 'anti-spam-comment-shield'),
-                                    '<strong>' . absint($options['min_submit_time']) . '</strong>'
+                                echo wp_kses_post(
+                                    sprintf(
+                                        /* translators: %s is the minimum number of seconds required before a comment can be submitted. */
+                                        __('Rejects comments submitted within %s seconds of page load. Real users take at least a few seconds to type.', 'rabbitbuilds-anti-spam-comment-shield'),
+                                        '<strong>' . absint($options['min_submit_time']) . '</strong>'
+                                    )
                                 );
                                 ?>
                             </p>
                         </div>
                         <label class="wpasc-toggle">
-                            <input type="checkbox" name="wp_anti_spam_comment_settings[enable_time_check]"
+                            <input type="checkbox" name="rbascs_settings[enable_time_check]"
                                 id="enable_time_check" value="1" <?php checked($options['enable_time_check'], 1); ?> />
                             <span class="wpasc-toggle-slider"></span>
                         </label>
@@ -405,16 +407,16 @@ function wp_anti_spam_comment_settings_page()
                     <div class="wpasc-setting-row">
                         <div class="wpasc-setting-info">
                             <label class="wpasc-setting-title" for="enable_rest_protect">
-                                <?php esc_html_e('REST API Protection', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('REST API Protection', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                 <span
-                                    class="wpasc-badge wpasc-badge-new"><?php esc_html_e('New', 'anti-spam-comment-shield'); ?></span>
+                                    class="wpasc-badge wpasc-badge-new"><?php esc_html_e('New', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                             </label>
                             <p class="wpasc-setting-desc">
-                                <?php esc_html_e('Blocks unauthenticated comment creation through the WordPress REST API endpoint.', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('Blocks unauthenticated comment creation through the WordPress REST API endpoint.', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                             </p>
                         </div>
                         <label class="wpasc-toggle">
-                            <input type="checkbox" name="wp_anti_spam_comment_settings[enable_rest_protect]"
+                            <input type="checkbox" name="rbascs_settings[enable_rest_protect]"
                                 id="enable_rest_protect" value="1" <?php checked($options['enable_rest_protect'], 1); ?> />
                             <span class="wpasc-toggle-slider"></span>
                         </label>
@@ -433,9 +435,9 @@ function wp_anti_spam_comment_settings_page()
                             <path
                                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                         </svg>
-                        <?php esc_html_e('Advanced Settings', 'anti-spam-comment-shield'); ?>
+                        <?php esc_html_e('Advanced Settings', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                     </h2>
-                    <p class="wpasc-card-desc"><?php esc_html_e('Fine-tune the anti-spam behavior.', 'anti-spam-comment-shield'); ?>
+                    <p class="wpasc-card-desc"><?php esc_html_e('Fine-tune the anti-spam behavior.', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                     </p>
                 </div>
                 <div class="wpasc-card-body">
@@ -444,16 +446,16 @@ function wp_anti_spam_comment_settings_page()
                     <div class="wpasc-setting-row">
                         <div class="wpasc-setting-info">
                             <label class="wpasc-setting-title"
-                                for="min_submit_time"><?php esc_html_e('Minimum Submit Time (seconds)', 'anti-spam-comment-shield'); ?></label>
+                                for="min_submit_time"><?php esc_html_e('Minimum Submit Time (seconds)', 'rabbitbuilds-anti-spam-comment-shield'); ?></label>
                             <p class="wpasc-setting-desc">
-                                <?php esc_html_e('Comments submitted faster than this threshold will be blocked. Range: 1–30 seconds.', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('Comments submitted faster than this threshold will be blocked. Range: 1–30 seconds.', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                             </p>
                         </div>
                         <div class="wpasc-input-wrapper">
-                            <input type="number" name="wp_anti_spam_comment_settings[min_submit_time]" id="min_submit_time"
+                            <input type="number" name="rbascs_settings[min_submit_time]" id="min_submit_time"
                                 value="<?php echo absint($options['min_submit_time']); ?>" min="1" max="30"
                                 class="wpasc-input-number" />
-                            <span class="wpasc-input-suffix"><?php esc_html_e('sec', 'anti-spam-comment-shield'); ?></span>
+                            <span class="wpasc-input-suffix"><?php esc_html_e('sec', 'rabbitbuilds-anti-spam-comment-shield'); ?></span>
                         </div>
                     </div>
 
@@ -461,12 +463,12 @@ function wp_anti_spam_comment_settings_page()
                     <div class="wpasc-setting-row wpasc-setting-row-full">
                         <div class="wpasc-setting-info">
                             <label class="wpasc-setting-title"
-                                for="blocked_message"><?php esc_html_e('Custom Blocked Message', 'anti-spam-comment-shield'); ?></label>
+                                for="blocked_message"><?php esc_html_e('Custom Blocked Message', 'rabbitbuilds-anti-spam-comment-shield'); ?></label>
                             <p class="wpasc-setting-desc">
-                                <?php esc_html_e('The message displayed when a comment is blocked as spam.', 'anti-spam-comment-shield'); ?>
+                                <?php esc_html_e('The message displayed when a comment is blocked as spam.', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                             </p>
                         </div>
-                        <textarea name="wp_anti_spam_comment_settings[blocked_message]" id="blocked_message"
+                        <textarea name="rbascs_settings[blocked_message]" id="blocked_message"
                             class="wpasc-textarea"
                             rows="3"><?php echo esc_textarea($options['blocked_message']); ?></textarea>
                     </div>
@@ -476,10 +478,10 @@ function wp_anti_spam_comment_settings_page()
 
             <!-- Save Button -->
             <div class="wpasc-save-bar">
-                <?php submit_button(__('Save Settings', 'anti-spam-comment-shield'), 'primary wpasc-save-btn', 'submit', false); ?>
+                <?php submit_button(esc_html__('Save Settings', 'rabbitbuilds-anti-spam-comment-shield'), 'primary wpasc-save-btn', 'submit', false); ?>
                 <button type="button" class="button wpasc-reset-btn"
-                    onclick="if(confirm('<?php echo esc_js(__('Reset all settings to default?', 'anti-spam-comment-shield')); ?>')) { document.getElementById('wpasc-reset-form').submit(); }">
-                    <?php esc_html_e('Reset to Defaults', 'anti-spam-comment-shield'); ?>
+                    onclick="if(confirm('<?php echo esc_js(__('Reset all settings to default?', 'rabbitbuilds-anti-spam-comment-shield')); ?>')) { document.getElementById('wpasc-reset-form').submit(); }">
+                    <?php esc_html_e('Reset to Defaults', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                 </button>
             </div>
 
@@ -487,8 +489,8 @@ function wp_anti_spam_comment_settings_page()
 
         <!-- Reset Form -->
         <form id="wpasc-reset-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-            <input type="hidden" name="action" value="wp_anti_spam_comment_reset" />
-            <?php wp_nonce_field('wp_anti_spam_comment_reset_nonce', '_wpnonce_reset'); ?>
+            <input type="hidden" name="action" value="rbascs_reset" />
+            <?php wp_nonce_field('rbascs_reset_nonce', '_wpnonce_reset'); ?>
         </form>
 
         <!-- How It Works Section -->
@@ -501,9 +503,9 @@ function wp_anti_spam_comment_settings_page()
                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                         <line x1="12" y1="17" x2="12.01" y2="17" />
                     </svg>
-                    <?php esc_html_e('How It Works', 'anti-spam-comment-shield'); ?>
+                    <?php esc_html_e('How It Works', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                 </h2>
-                <p class="wpasc-card-desc"><?php esc_html_e('Your comments are protected through a 4-step defense pipeline.', 'anti-spam-comment-shield'); ?></p>
+                <p class="wpasc-card-desc"><?php esc_html_e('Your comments are protected through a 4-step defense pipeline.', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
             </div>
             <div class="wpasc-card-body wpasc-how-it-works">
 
@@ -522,9 +524,9 @@ function wp_anti_spam_comment_settings_page()
                             <div class="wpasc-step-content">
                                 <h3>
                                     <span class="wpasc-step-number">1</span>
-                                    <?php esc_html_e('Action URL Hidden', 'anti-spam-comment-shield'); ?>
+                                    <?php esc_html_e('Action URL Hidden', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                 </h3>
-                                <p><?php esc_html_e('The comment form\'s action URL is stripped from the HTML source — bots scanning raw HTML find nothing to target.', 'anti-spam-comment-shield'); ?></p>
+                                <p><?php esc_html_e('The comment form\'s action URL is stripped from the HTML source — bots scanning raw HTML find nothing to target.', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
                             </div>
                         </div>
                     </div>
@@ -544,9 +546,9 @@ function wp_anti_spam_comment_settings_page()
                                 <div class="wpasc-step-content">
                                     <h3>
                                         <span class="wpasc-step-number">2</span>
-                                        <?php esc_html_e('Human Interaction Detected', 'anti-spam-comment-shield'); ?>
+                                        <?php esc_html_e('Human Interaction Detected', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                     </h3>
-                                    <p><?php esc_html_e('Real user activity — scrolling, mouse movement, or focus — triggers JavaScript to restore the form action with a unique hash token.', 'anti-spam-comment-shield'); ?></p>
+                                    <p><?php esc_html_e('Real user activity — scrolling, mouse movement, or focus — triggers JavaScript to restore the form action with a unique hash token.', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
                                 </div>
                             </div>
                         </div>
@@ -564,9 +566,9 @@ function wp_anti_spam_comment_settings_page()
                                 <div class="wpasc-step-content">
                                     <h3>
                                         <span class="wpasc-step-number">3</span>
-                                        <?php esc_html_e('Multi-Layer Validation', 'anti-spam-comment-shield'); ?>
+                                        <?php esc_html_e('Multi-Layer Validation', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                     </h3>
-                                    <p><?php esc_html_e('Hash token, honeypot field, and submission timing are all verified server-side before any comment passes through.', 'anti-spam-comment-shield'); ?></p>
+                                    <p><?php esc_html_e('Hash token, honeypot field, and submission timing are all verified server-side before any comment passes through.', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
                                 </div>
                             </div>
                         </div>
@@ -584,9 +586,9 @@ function wp_anti_spam_comment_settings_page()
                             <div class="wpasc-step-content">
                                 <h3>
                                     <span class="wpasc-step-number">4</span>
-                                    <?php esc_html_e('Spam Eliminated', 'anti-spam-comment-shield'); ?>
+                                    <?php esc_html_e('Spam Eliminated', 'rabbitbuilds-anti-spam-comment-shield'); ?>
                                 </h3>
-                                <p><?php esc_html_e('Failed submissions get an instant 403 response. Zero spam reaches your database — your comments stay clean.', 'anti-spam-comment-shield'); ?></p>
+                                <p><?php esc_html_e('Failed submissions get an instant 403 response. Zero spam reaches your database — your comments stay clean.', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
                             </div>
                         </div>
                     </div>
@@ -599,9 +601,11 @@ function wp_anti_spam_comment_settings_page()
         <div class="wpasc-footer">
             <p>
                 <?php
-                printf(
-                    __('Made with ❤️ by %s • GDPR Compliant • No External Requests • ~200 Bytes Inline JS', 'anti-spam-comment-shield'),
-                    '<a href="https://rabbitbuilds.com/" target="_blank" rel="noopener">Rabbit Builds (Saeed Ashif Ahmed)</a>'
+                echo wp_kses_post(
+                    sprintf(
+                        __('Made with ❤️ by %s • GDPR Compliant • No External Requests • ~200 Bytes Inline JS', 'rabbitbuilds-anti-spam-comment-shield'),
+                        '<a href="https://rabbitbuilds.com/" target="_blank" rel="noopener">Rabbit Builds (Saeed Ashif Ahmed)</a>'
+                    )
                 );
                 ?>
             </p>
@@ -614,40 +618,40 @@ function wp_anti_spam_comment_settings_page()
 /**
  * ─── Handle Settings Reset ──────────────────────────────────────────────────
  */
-add_action('admin_post_wp_anti_spam_comment_reset', 'wp_anti_spam_comment_handle_reset');
+add_action('admin_post_rbascs_reset', 'rbascs_handle_reset');
 
-function wp_anti_spam_comment_handle_reset()
+function rbascs_handle_reset()
 {
     if (!current_user_can('manage_options')) {
         wp_die(
-            esc_html__('Unauthorized', 'anti-spam-comment-shield'),
-            esc_html__('Error', 'anti-spam-comment-shield'),
+            esc_html__('Unauthorized', 'rabbitbuilds-anti-spam-comment-shield'),
+            esc_html__('Error', 'rabbitbuilds-anti-spam-comment-shield'),
             array('response' => 403)
         );
     }
 
-    check_admin_referer('wp_anti_spam_comment_reset_nonce', '_wpnonce_reset');
+    check_admin_referer('rbascs_reset_nonce', '_wpnonce_reset');
 
-    update_option('wp_anti_spam_comment_settings', wp_anti_spam_comment_get_defaults());
+    update_option('rbascs_settings', rbascs_get_defaults());
 
-    wp_safe_redirect(admin_url('options-general.php?page=anti-spam-comment-shield&reset=1'));
+    wp_safe_redirect(admin_url('options-general.php?page=rabbitbuilds-anti-spam-comment-shield&reset=1'));
     exit;
 }
 
 /**
  * ─── Reset Notice ───────────────────────────────────────────────────────────
  */
-add_action('admin_notices', 'wp_anti_spam_comment_reset_notice');
+add_action('admin_notices', 'rbascs_reset_notice');
 
-function wp_anti_spam_comment_reset_notice()
+function rbascs_reset_notice()
 {
     $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
     $reset = isset($_GET['reset']) ? sanitize_text_field(wp_unslash($_GET['reset'])) : '';
 
-    if ('anti-spam-comment-shield' === $page && '1' === $reset) {
+    if ('rabbitbuilds-anti-spam-comment-shield' === $page && '1' === $reset) {
         ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php esc_html_e('Settings have been reset to defaults.', 'anti-spam-comment-shield'); ?></p>
+            <p><?php esc_html_e('Settings have been reset to defaults.', 'rabbitbuilds-anti-spam-comment-shield'); ?></p>
         </div>
         <?php
     }
@@ -659,16 +663,16 @@ function wp_anti_spam_comment_reset_notice()
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
-$wp_anti_spam_options = wp_anti_spam_comment_get_options();
+$rbascs_options = rbascs_get_options();
 
 /**
  * ─── 1. Remove Comment Action URL from HTML ─────────────────────────────────
  */
-if ($wp_anti_spam_options['enable_hash_check']) {
-    add_filter('comment_form_defaults', 'wp_anti_spam_comment_remove_action_url');
+if ($rbascs_options['enable_hash_check']) {
+    add_filter('comment_form_defaults', 'rbascs_remove_action_url');
 }
 
-function wp_anti_spam_comment_remove_action_url($defaults)
+function rbascs_remove_action_url($defaults)
 {
     $defaults['action'] = '';
     return $defaults;
@@ -677,61 +681,65 @@ function wp_anti_spam_comment_remove_action_url($defaults)
 /**
  * ─── 2. Inject JavaScript to Restore Action URL on User Interaction ─────────
  */
-if ($wp_anti_spam_options['enable_hash_check']) {
-    add_action('wp_footer', 'wp_anti_spam_comment_inject_js', 99);
+if ($rbascs_options['enable_hash_check']) {
+    add_action('wp_enqueue_scripts', 'rbascs_enqueue_frontend_js');
 }
 
-function wp_anti_spam_comment_inject_js()
+function rbascs_enqueue_frontend_js()
 {
     if (!is_singular() || !comments_open()) {
         return;
     }
 
-    $options = wp_anti_spam_comment_get_options();
-    $action_url = wp_make_link_relative(site_url('/wp-comments-post.php')) . '?' . WP_ANTI_SPAM_COMMENT_UNIQUE_KEY;
+    $options = rbascs_get_options();
+    $action_url = wp_make_link_relative(site_url('/wp-comments-post.php')) . '?' . RBASCS_UNIQUE_KEY;
     $min_time = absint($options['min_submit_time']);
 
-    echo "\n<script>\n";
-    echo "(function(){\n";
-    echo "var f=document.querySelector(\"#commentform,#ast-commentform,#fl-comment-form,#ht-commentform,#wpd-comm-form,.comment-form\");\n";
-    echo "if(!f)return;\n";
-    echo "var d=0;\n";
+    // Register a virtual script handle (no external file needed)
+    wp_register_script('rbascs-frontend', false, array(), RBASCS_VERSION, true);
+
+    $js = "(function(){\n";
+    $js .= "var f=document.querySelector(\"#commentform,#ast-commentform,#fl-comment-form,#ht-commentform,#wpd-comm-form,.comment-form\");\n";
+    $js .= "if(!f)return;\n";
+    $js .= "var d=0;\n";
 
     // Inject timestamp hidden field for time-based check
     if ($options['enable_time_check']) {
-        echo "var t=" . $min_time . ";\n";
-        echo "var ts=document.createElement('input');ts.type='hidden';ts.name='_wpasc_ts';ts.value=Date.now();f.appendChild(ts);\n";
+        $js .= "var t=" . $min_time . ";\n";
+        $js .= "var ts=document.createElement('input');ts.type='hidden';ts.name='_wpasc_ts';ts.value=Date.now();f.appendChild(ts);\n";
     }
 
-    echo "function u(){if(d)return;d=1;f.action=\"" . esc_js($action_url) . "\";}\n";
-    echo "document.addEventListener('scroll',u,{once:true,passive:true});\n";
-    echo "document.addEventListener('mousemove',u,{once:true,passive:true});\n";
-    echo "document.addEventListener('touchstart',u,{once:true,passive:true});\n";
-    echo "f.addEventListener('focusin',u,{once:true});\n";
+    $js .= "function u(){if(d)return;d=1;f.action=\"" . esc_js($action_url) . "\";}\n";
+    $js .= "document.addEventListener('scroll',u,{once:true,passive:true});\n";
+    $js .= "document.addEventListener('mousemove',u,{once:true,passive:true});\n";
+    $js .= "document.addEventListener('touchstart',u,{once:true,passive:true});\n";
+    $js .= "f.addEventListener('focusin',u,{once:true});\n";
 
     // Time-based: prevent form submit if too fast
     if ($options['enable_time_check']) {
-        echo "f.addEventListener('submit',function(e){\n";
-        echo "if(ts.value&&(Date.now()-parseInt(ts.value,10))<t*1000){e.preventDefault();alert('" . esc_js(__('Please wait a moment before submitting your comment.', 'anti-spam-comment-shield')) . "');}\n";
-        echo "});\n";
+        $js .= "f.addEventListener('submit',function(e){\n";
+        $js .= "if(ts.value&&(Date.now()-parseInt(ts.value,10))<t*1000){e.preventDefault();alert('" . esc_js(__('Please wait a moment before submitting your comment.', 'rabbitbuilds-anti-spam-comment-shield')) . "');}\n";
+        $js .= "});\n";
     }
 
-    echo "})();\n";
-    echo "</script>\n";
+    $js .= "})();";
+
+    wp_add_inline_script('rbascs-frontend', $js);
+    wp_enqueue_script('rbascs-frontend');
 }
 
 /**
  * ─── 3. Honeypot Field ──────────────────────────────────────────────────────
  */
-if ($wp_anti_spam_options['enable_honeypot']) {
-    add_action('comment_form_after_fields', 'wp_anti_spam_comment_honeypot_field');
-    add_action('comment_form_logged_in_after', 'wp_anti_spam_comment_honeypot_field');
+if ($rbascs_options['enable_honeypot']) {
+    add_action('comment_form_after_fields', 'rbascs_honeypot_field');
+    add_action('comment_form_logged_in_after', 'rbascs_honeypot_field');
 }
 
-function wp_anti_spam_comment_honeypot_field()
+function rbascs_honeypot_field()
 {
     echo '<p style="position:absolute;left:-9999px;height:0;width:0;overflow:hidden;" aria-hidden="true">';
-    echo '<label for="wpasc_website_url">' . esc_html__('Website URL', 'anti-spam-comment-shield') . '</label>';
+    echo '<label for="wpasc_website_url">' . esc_html__('Website URL', 'rabbitbuilds-anti-spam-comment-shield') . '</label>';
     echo '<input type="hidden" name="_wpasc_nonce" value="' . esc_attr(wp_create_nonce('wpasc_comment_nonce')) . '" />';
     echo '<input type="text" name="wpasc_website_url" id="wpasc_website_url" value="" tabindex="-1" autocomplete="off" />';
     echo '</p>';
@@ -740,11 +748,11 @@ function wp_anti_spam_comment_honeypot_field()
 /**
  * ─── 4. Validate Honeypot on Comment Pre-Process ────────────────────────────
  */
-if ($wp_anti_spam_options['enable_honeypot']) {
-    add_filter('preprocess_comment', 'wp_anti_spam_comment_check_honeypot', 1);
+if ($rbascs_options['enable_honeypot']) {
+    add_filter('preprocess_comment', 'rbascs_check_honeypot', 1);
 }
 
-function wp_anti_spam_comment_check_honeypot($commentdata)
+function rbascs_check_honeypot($commentdata)
 {
     $nonce = isset($_POST['_wpasc_nonce']) ? sanitize_text_field(wp_unslash($_POST['_wpasc_nonce'])) : '';
     if (!wp_verify_nonce($nonce, 'wpasc_comment_nonce')) {
@@ -756,8 +764,8 @@ function wp_anti_spam_comment_check_honeypot($commentdata)
         : '';
 
     if ('' !== $honeypot_value) {
-        wp_anti_spam_comment_record_block();
-        wp_anti_spam_comment_block_response();
+        rbascs_record_block();
+        rbascs_block_response();
     }
     return $commentdata;
 }
@@ -765,13 +773,13 @@ function wp_anti_spam_comment_check_honeypot($commentdata)
 /**
  * ─── 5. Validate Time-Based Check ───────────────────────────────────────────
  */
-if ($wp_anti_spam_options['enable_time_check']) {
-    add_filter('preprocess_comment', 'wp_anti_spam_comment_check_time', 2);
+if ($rbascs_options['enable_time_check']) {
+    add_filter('preprocess_comment', 'rbascs_check_time', 2);
 }
 
-function wp_anti_spam_comment_check_time($commentdata)
+function rbascs_check_time($commentdata)
 {
-    $options = wp_anti_spam_comment_get_options();
+    $options = rbascs_get_options();
     $nonce = isset($_POST['_wpasc_nonce']) ? sanitize_text_field(wp_unslash($_POST['_wpasc_nonce'])) : '';
     if (!wp_verify_nonce($nonce, 'wpasc_comment_nonce')) {
         return $commentdata;
@@ -784,16 +792,16 @@ function wp_anti_spam_comment_check_time($commentdata)
     $submitted_ts = absint(wp_unslash($_POST['_wpasc_ts']));
 
     if ($submitted_ts <= 0) {
-        wp_anti_spam_comment_record_block();
-        wp_anti_spam_comment_block_response();
+        rbascs_record_block();
+        rbascs_block_response();
     }
 
     $current_ts = (int) round(microtime(true) * 1000);
     $elapsed_secs = ($current_ts - $submitted_ts) / 1000;
 
     if ($elapsed_secs < $options['min_submit_time']) {
-        wp_anti_spam_comment_record_block();
-        wp_anti_spam_comment_block_response();
+        rbascs_record_block();
+        rbascs_block_response();
     }
 
     return $commentdata;
@@ -802,17 +810,17 @@ function wp_anti_spam_comment_check_time($commentdata)
 /**
  * ─── 6. REST API Comment Protection ─────────────────────────────────────────
  */
-if ($wp_anti_spam_options['enable_rest_protect']) {
-    add_filter('rest_pre_insert_comment', 'wp_anti_spam_comment_rest_protect', 10, 2);
+if ($rbascs_options['enable_rest_protect']) {
+    add_filter('rest_pre_insert_comment', 'rbascs_rest_protect', 10, 2);
 }
 
-function wp_anti_spam_comment_rest_protect($prepared_comment, $_request)
+function rbascs_rest_protect($prepared_comment, $_request)
 {
     if (!is_user_logged_in()) {
-        wp_anti_spam_comment_record_block();
+        rbascs_record_block();
         return new WP_Error(
             'rest_comment_spam_blocked',
-            __('Comment blocked by Rabbit Builds Anti-Spam Comment Shield.', 'anti-spam-comment-shield'),
+            __('Comment blocked by Rabbit Builds Anti-Spam Comment Shield.', 'rabbitbuilds-anti-spam-comment-shield'),
             array('status' => 403)
         );
     }
@@ -822,14 +830,14 @@ function wp_anti_spam_comment_rest_protect($prepared_comment, $_request)
 /**
  * ─── 7. Hash-Based Verification on POST ─────────────────────────────────────
  */
-if ($wp_anti_spam_options['enable_hash_check']) {
-    add_action('pre_comment_on_post', 'wp_anti_spam_comment_validate_hash_request');
+if ($rbascs_options['enable_hash_check']) {
+    add_action('pre_comment_on_post', 'rbascs_validate_hash_request');
 }
 
-function wp_anti_spam_comment_validate_hash_request()
+function rbascs_validate_hash_request()
 {
     $query_string = isset($_SERVER['QUERY_STRING']) ? sanitize_text_field(wp_unslash($_SERVER['QUERY_STRING'])) : '';
-    $has_key = hash_equals(WP_ANTI_SPAM_COMMENT_UNIQUE_KEY, $query_string);
+    $has_key = hash_equals(RBASCS_UNIQUE_KEY, $query_string);
 
     $referrer = wp_get_raw_referer();
     $home_host = wp_parse_url(home_url(), PHP_URL_HOST);
@@ -840,47 +848,38 @@ function wp_anti_spam_comment_validate_hash_request()
         && strtolower((string) $home_host) === strtolower((string) $ref_host);
 
     if (!$has_key || !$has_valid_referrer) {
-        wp_anti_spam_comment_record_block();
-        wp_anti_spam_comment_block_response();
+        rbascs_record_block();
+        rbascs_block_response();
     }
 }
 
 /**
  * ─── Block Response ─────────────────────────────────────────────────────────
  */
-function wp_anti_spam_comment_block_response()
+function rbascs_block_response()
 {
-    $options = wp_anti_spam_comment_get_options();
+    $options = rbascs_get_options();
     $message = !empty($options['blocked_message'])
         ? $options['blocked_message']
-        : __('Your comment was blocked by our anti-spam protection.', 'anti-spam-comment-shield');
+        : __('Your comment was blocked by our anti-spam protection.', 'rabbitbuilds-anti-spam-comment-shield');
 
-    status_header(403);
-    nocache_headers();
-
-    exit(
-        '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' . esc_html__('Blocked', 'anti-spam-comment-shield') . '</title>'
-        . '<style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f2f5;color:#1a1a2e;}'
-        . '.box{background:#fff;padding:40px 50px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.08);text-align:center;max-width:480px;}'
-        . '.icon{font-size:48px;margin-bottom:16px;}'
-        . 'h1{font-size:22px;margin:0 0 12px;color:#e74c3c;}'
-        . 'p{font-size:15px;line-height:1.6;color:#555;margin:0 0 20px;}'
-        . '.hint{font-size:13px;color:#999;border-top:1px solid #eee;padding-top:16px;}'
-        . '</style></head><body><div class="box">'
-        . '<div class="icon">🛡️</div>'
-        . '<h1>' . esc_html__('Spam Blocked', 'anti-spam-comment-shield') . '</h1>'
+    $html_message = '<h1>' . esc_html__('Spam Blocked', 'rabbitbuilds-anti-spam-comment-shield') . '</h1>'
         . '<p>' . esc_html($message) . '</p>'
-        . '<p class="hint">' . esc_html__('If you are a site admin, please clear your page cache after activating the plugin.', 'anti-spam-comment-shield') . '</p>'
-        . '</div></body></html>'
+        . '<p>' . esc_html__('If you are a site admin, please clear your page cache after activating the plugin.', 'rabbitbuilds-anti-spam-comment-shield') . '</p>';
+
+    wp_die(
+        wp_kses_post($html_message),
+        esc_html__('Blocked', 'rabbitbuilds-anti-spam-comment-shield'),
+        array('response' => 403, 'back_link' => true)
     );
 }
 
 /**
  * ─── Record Blocked Spam ────────────────────────────────────────────────────
  */
-function wp_anti_spam_comment_record_block()
+function rbascs_record_block()
 {
-    $stats = wp_anti_spam_comment_get_stats();
+    $stats = rbascs_get_stats();
 
     // Reset daily counter if new day
     if ($stats['blocked_date'] !== current_time('Y-m-d')) {
@@ -892,28 +891,28 @@ function wp_anti_spam_comment_record_block()
     $stats['blocked_today']++;
     $stats['last_blocked_at'] = current_time('mysql');
 
-    update_option('wp_anti_spam_comment_stats', $stats);
+    update_option('rbascs_stats', $stats);
 }
 
 /**
  * ─── Admin Bar Spam Counter ─────────────────────────────────────────────────
  */
-add_action('admin_bar_menu', 'wp_anti_spam_comment_admin_bar', 999);
+add_action('admin_bar_menu', 'rbascs_admin_bar', 999);
 
-function wp_anti_spam_comment_admin_bar($wp_admin_bar)
+function rbascs_admin_bar($wp_admin_bar)
 {
     if (!current_user_can('manage_options')) {
         return;
     }
 
-    $stats = wp_anti_spam_comment_get_stats(true);
+    $stats = rbascs_get_stats(true);
 
     $wp_admin_bar->add_node(array(
-        'id' => 'anti-spam-comment-shield',
-        'title' => '🛡️ ' . number_format_i18n(absint($stats['blocked_total'])) . ' ' . esc_html__('spam blocked', 'anti-spam-comment-shield'),
-        'href' => admin_url('options-general.php?page=anti-spam-comment-shield'),
+        'id' => 'rabbitbuilds-anti-spam-comment-shield',
+        'title' => '🛡️ ' . number_format_i18n(absint($stats['blocked_total'])) . ' ' . esc_html__('spam blocked', 'rabbitbuilds-anti-spam-comment-shield'),
+        'href' => admin_url('options-general.php?page=rabbitbuilds-anti-spam-comment-shield'),
         'meta' => array(
-            'title' => esc_html__('Rabbit Builds Anti-Spam Comment Shield — Total spam blocked', 'anti-spam-comment-shield'),
+            'title' => esc_html__('Rabbit Builds Anti-Spam Comment Shield — Total spam blocked', 'rabbitbuilds-anti-spam-comment-shield'),
         ),
     ));
 }

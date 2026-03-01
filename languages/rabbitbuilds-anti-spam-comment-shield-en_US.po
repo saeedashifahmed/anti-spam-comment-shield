@@ -13,7 +13,7 @@ msgstr ""
 "POT-Creation-Date: 2021-01-18 14:23+0000\n"
 "PO-Revision-Date: 2021-01-18 14:38+0000\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Domain: anti-spam-comment-shield\n"
+"X-Domain: rabbitbuilds-anti-spam-comment-shield\n"
 "Language: en_US\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Loco-Version: 2.5.0; wp-5.6"
@@ -35,8 +35,8 @@ msgid "Rabbit Builds (Saeed Ashif Ahmed)"
 msgstr "Rabbit Builds (Saeed Ashif Ahmed)"
 
 #. URI of the plugin
-msgid "https://wordpress.org/plugins/anti-spam-comment-shield/"
-msgstr "https://wordpress.org/plugins/anti-spam-comment-shield/"
+msgid "https://wordpress.org/plugins/rabbitbuilds-anti-spam-comment-shield/"
+msgstr "https://wordpress.org/plugins/rabbitbuilds-anti-spam-comment-shield/"
 
 #. Author URI of the plugin
 msgid "https://rabbitbuilds.com/"

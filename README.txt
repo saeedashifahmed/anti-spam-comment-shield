@@ -1,5 +1,5 @@
 === Rabbit Builds Anti-Spam Comment Shield ===
-Contributors: saeedashifahmed
+Contributors: saeedashifahmed, rabbitbuilds
 Donate link: https://rabbitbuilds.com/
 Tags: anti spam, stop spam, comment spam, security, gdpr
 Requires at least: 5.0
