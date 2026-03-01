@@ -3,7 +3,7 @@
  * Plugin Name:       Rabbit Builds Anti-Spam Comment Shield
  * Plugin URI:        https://wordpress.org/plugins/rabbitbuilds-anti-spam-comment-shield/
  * Description:       Advanced, lightweight, and GDPR-compliant anti-spam protection for WordPress comments. Zero configuration needed — just activate and forget spam forever.
- * Author:            Rabbit Builds (Saeed Ashif Ahmed)
+ * Author:            Rabbit Builds
  * Author URI:        https://rabbitbuilds.com/
  * Version:           2.0.4
  * Text Domain:       rabbitbuilds-anti-spam-comment-shield
@@ -604,7 +604,7 @@ function rbascs_settings_page()
                 echo wp_kses_post(
                     sprintf(
                         __('Made with ❤️ by %s • GDPR Compliant • No External Requests • ~200 Bytes Inline JS', 'rabbitbuilds-anti-spam-comment-shield'),
-                        '<a href="https://rabbitbuilds.com/" target="_blank" rel="noopener">Rabbit Builds (Saeed Ashif Ahmed)</a>'
+                        '<a href="https://rabbitbuilds.com/" target="_blank" rel="noopener">Rabbit Builds</a>'
                     )
                 );
                 ?>
