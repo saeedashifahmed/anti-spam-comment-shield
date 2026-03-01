@@ -5,7 +5,7 @@
  * Description:       Advanced, lightweight, and GDPR-compliant anti-spam protection for WordPress comments. Zero configuration needed — just activate and forget spam forever.
  * Author:            Rabbit Builds (Saeed Ashif Ahmed)
  * Author URI:        https://rabbitbuilds.com/
- * Version:           2.0.3
+ * Version:           2.0.4
  * Text Domain:       rabbitbuilds-anti-spam-comment-shield
  * Domain Path:       /languages
  * Requires at least: 5.0
@@ -20,7 +20,7 @@ defined('ABSPATH') || die();
 /**
  * ─── Constants ───────────────────────────────────────────────────────────────
  */
-define('RBASCS_VERSION', '2.0.3');
+define('RBASCS_VERSION', '2.0.4');
 define('RBASCS_URL', plugin_dir_url(__FILE__));
 
 // Generate a unique key from NONCE_SALT or DOCUMENT_ROOT

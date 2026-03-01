@@ -5,7 +5,7 @@ Tags: anti spam, stop spam, comment spam, security, gdpr
 Requires at least: 5.0
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,16 @@ This plugin is licensed under **GPL-2.0-or-later**.
 You may use, modify, and redistribute it under the terms of the GNU General Public License.
 
 == Changelog ==
+
+= 2.0.4 =
+* Fixed WordPress.org plugin review issues
+* Updated function/constant prefixes to avoid conflicts (rbascs_ and RBASCS_)
+* Fixed text domain to match plugin slug (rabbitbuilds-anti-spam-comment-shield)
+* Converted inline JavaScript to use wp_enqueue_scripts and wp_add_inline_script()
+* Converted block response to use wp_die() instead of raw HTML
+* Fixed file path detection to use plugin_dir_path() instead of ABSPATH
+* Improved escaping on all translatable strings
+* Added contributors to README
 
 = 2.0.3 =
 * Rebranded plugin display name to "Rabbit Builds Anti-Spam Comment Shield"
@@ -162,6 +172,9 @@ You may use, modify, and redistribute it under the terms of the GNU General Publ
 * Initial release
 
 == Upgrade Notice ==
+
+= 2.0.4 =
+Fixed WordPress.org plugin review issues including function prefix conflicts, text domain, enqueuing scripts/styles, and escaping.
 
 = 2.0.3 =
 Updated branding and slug to "Rabbit Builds Anti-Spam Comment Shield" (`rabbit-builds-anti-spam-comment-shield`).
